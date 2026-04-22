@@ -7,7 +7,7 @@ import { ArrowDownToLine, ArrowUpFromLine, ShoppingBag, TrendingUp, Users, Tag }
 
 type Tx = { id: string; type: string; amount: number; currency: string; status: string; description: string | null; created_at: string };
 
-export const Route = createFileRoute("/_app/transactions")({
+export const Route = createFileRoute("/app/transactions")({
   component: TxTab,
 });
 

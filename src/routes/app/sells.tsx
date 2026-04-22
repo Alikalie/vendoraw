@@ -17,7 +17,7 @@ type Listing = {
   investments: { products: { name: string } | null; total_return: number } | null;
 };
 
-export const Route = createFileRoute("/_app/sells")({
+export const Route = createFileRoute("/app/sells")({
   component: SellsTab,
 });
 

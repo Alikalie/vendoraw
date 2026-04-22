@@ -11,7 +11,7 @@ type Product = {
   daily_earning: number; duration_days: number; total_return: number; risk_level: string;
 };
 
-export const Route = createFileRoute("/_app/market")({
+export const Route = createFileRoute("/app/market")({
   component: MarketTab,
 });
 

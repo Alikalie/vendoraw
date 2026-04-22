@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
 import { ArrowDownToLine, ArrowUpFromLine, Bell, TrendingUp, Wallet, Activity, ShieldAlert } from "lucide-react";
 
-export const Route = createFileRoute("/_app/")({
+export const Route = createFileRoute("/app/")({
   component: HomeTab,
 });
 

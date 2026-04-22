@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { MobileShell } from "@/components/app/MobileShell";
 import { BottomTabs } from "@/components/app/BottomTabs";
 
-export const Route = createFileRoute("/_app")({
+export const Route = createFileRoute("/app")({
   component: AppLayout,
 });
 

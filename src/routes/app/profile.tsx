@@ -6,7 +6,7 @@ import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import { ArrowDownToLine, ArrowUpFromLine, Copy, LogOut, ShieldAlert, LifeBuoy, FileText, Wallet } from "lucide-react";
 
-export const Route = createFileRoute("/_app/profile")({
+export const Route = createFileRoute("/app/profile")({
   component: ProfileTab,
 });
 
