@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
-import { Tag } from "lucide-react";
+import { Tag, X } from "lucide-react";
+import { buyResaleListing, cancelResaleListing } from "@/server/resale";
 
 type Investment = {
   id: string; product_id: string; purchase_price: number; daily_earning: number;
@@ -17,6 +18,11 @@ type Listing = {
   investments: { products: { name: string } | null; total_return: number } | null;
 };
 
+type MyListing = {
+  id: string; investment_id: string; price: number; status: string; created_at: string; sold_at: string | null;
+  investments: { products: { name: string } | null } | null;
+};
+
 export const Route = createFileRoute("/app/sells")({
   component: SellsTab,
 });
@@ -25,21 +31,38 @@ function SellsTab() {
   const { profile, refreshProfile } = useAuth();
   const [mine, setMine] = useState<Investment[]>([]);
   const [market, setMarket] = useState<Listing[]>([]);
+  const [myListings, setMyListings] = useState<MyListing[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = async () => {
     if (!profile) return;
+    // Investments owned by user that are not currently listed for resale
+    const { data: openListings } = await supabase
+      .from("resale_listings")
+      .select("investment_id")
+      .eq("seller_id", profile.id)
+      .eq("status", "open");
+    const lockedIds = new Set((openListings ?? []).map((l) => l.investment_id));
+
     const { data: invs } = await supabase
       .from("investments")
       .select("id,product_id,purchase_price,daily_earning,duration_days,total_return,status,end_date,products(name)")
       .eq("user_id", profile.id).eq("status", "active");
-    setMine((invs as unknown as Investment[]) ?? []);
+    setMine(((invs as unknown as Investment[]) ?? []).filter((i) => !lockedIds.has(i.id)));
 
     const { data: lst } = await supabase
       .from("resale_listings")
       .select("id,investment_id,seller_id,price,status,investments(total_return,products(name))")
       .eq("status", "open").neq("seller_id", profile.id);
     setMarket((lst as unknown as Listing[]) ?? []);
+
+    const { data: mineLst } = await supabase
+      .from("resale_listings")
+      .select("id,investment_id,price,status,created_at,sold_at,investments(products(name))")
+      .eq("seller_id", profile.id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    setMyListings((mineLst as unknown as MyListing[]) ?? []);
   };
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [profile?.id]);
 
@@ -65,25 +88,30 @@ function SellsTab() {
   const buyResale = async (l: Listing) => {
     if (profile.balance < l.price) return toast.error("Insufficient balance");
     setBusy(l.id);
-    // Mark listing sold
-    const { error: lErr } = await supabase
-      .from("resale_listings")
-      .update({ status: "sold", buyer_id: profile.id, sold_at: new Date().toISOString() })
-      .eq("id", l.id).eq("status", "open");
-    if (lErr) { setBusy(null); return toast.error(lErr.message); }
-    // Transfer investment to buyer
-    await supabase.from("investments").update({ user_id: profile.id }).eq("id", l.investment_id);
-    // Buyer debit
-    await supabase.from("profiles").update({ balance: profile.balance - l.price }).eq("id", profile.id);
-    await supabase.from("transactions").insert({
-      user_id: profile.id, type: "resale_buy", amount: l.price, currency: cur,
-      description: `Bought resale: ${l.investments?.products?.name ?? "investment"}`,
-    });
-    // Seller credit (RLS-allowed: seller updates own row; here we rely on a subsequent seller-side reconciliation in production. For now we record a transaction for seller via insert? RLS prevents inserting for other user.)
-    await refreshProfile();
-    setBusy(null);
-    toast.success("Resale purchased");
-    load();
+    try {
+      await buyResaleListing({ data: { listingId: l.id } });
+      toast.success("Resale purchased");
+      await refreshProfile();
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Purchase failed");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const cancelListing = async (id: string) => {
+    if (!confirm("Cancel this listing?")) return;
+    setBusy(id);
+    try {
+      await cancelResaleListing({ data: { listingId: id } });
+      toast.success("Listing cancelled");
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Cancel failed");
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (
@@ -96,7 +124,7 @@ function SellsTab() {
       <section>
         <h2 className="mb-2 text-sm font-semibold">My active investments</h2>
         <div className="space-y-2">
-          {mine.length === 0 && <Empty text="You have no active investments yet." />}
+          {mine.length === 0 && <Empty text="No investments available to list." />}
           {mine.map((inv) => (
             <div key={inv.id} className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-center justify-between">
@@ -108,6 +136,33 @@ function SellsTab() {
                   className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50">
                   <Tag className="h-3 w-3" /> List
                 </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold">My listings</h2>
+        <div className="space-y-2">
+          {myListings.length === 0 && <Empty text="You have no resale listings." />}
+          {myListings.map((l) => (
+            <div key={l.id} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold truncate">{l.investments?.products?.name ?? "Investment"}</div>
+                <div className="text-[11px] text-muted-foreground capitalize">
+                  {l.status}{l.sold_at ? ` · ${new Date(l.sold_at).toLocaleDateString()}` : ""}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-bold">{formatMoney(l.price, cur)}</div>
+                {l.status === "open" && (
+                  <button onClick={() => cancelListing(l.id)} disabled={busy === l.id}
+                    title="Cancel listing"
+                    className="rounded-full border border-border p-1.5 hover:bg-destructive/10 disabled:opacity-50">
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
