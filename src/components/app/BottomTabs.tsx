@@ -1,13 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Home, Store, Receipt, Tag, User } from "lucide-react";
 
-const tabs = [
+const tabs: ReadonlyArray<{ to: string; label: string; icon: typeof Home; exact?: boolean }> = [
   { to: "/app", label: "Home", icon: Home, exact: true },
   { to: "/app/market", label: "Market", icon: Store },
   { to: "/app/transactions", label: "Activity", icon: Receipt },
   { to: "/app/sells", label: "Sells", icon: Tag },
   { to: "/app/profile", label: "Profile", icon: User },
-] as const;
+];
 
 export function BottomTabs() {
   const loc = useLocation();
@@ -20,7 +20,7 @@ export function BottomTabs() {
           return (
             <li key={t.to}>
               <Link
-                to={t.to}
+                to={t.to as "/app"}
                 className={`flex flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
                   active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
