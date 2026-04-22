@@ -6,6 +6,7 @@ import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import { Tag, X } from "lucide-react";
 import { buyResaleListing, cancelResaleListing } from "@/server/resale";
+import { callAuthed } from "@/lib/server-call";
 
 type Investment = {
   id: string; product_id: string; purchase_price: number; daily_earning: number;
@@ -89,7 +90,7 @@ function SellsTab() {
     if (profile.balance < l.price) return toast.error("Insufficient balance");
     setBusy(l.id);
     try {
-      await buyResaleListing({ data: { listingId: l.id } });
+      await callAuthed(buyResaleListing, { listingId: l.id });
       toast.success("Resale purchased");
       await refreshProfile();
       await load();
@@ -104,7 +105,7 @@ function SellsTab() {
     if (!confirm("Cancel this listing?")) return;
     setBusy(id);
     try {
-      await cancelResaleListing({ data: { listingId: id } });
+      await callAuthed(cancelResaleListing, { listingId: id });
       toast.success("Listing cancelled");
       await load();
     } catch (e) {
