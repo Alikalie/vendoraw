@@ -216,6 +216,7 @@ export type Database = {
           currency: string
           description: string | null
           id: string
+          method_id: string | null
           status: string
           type: string
           user_id: string
@@ -226,6 +227,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          method_id?: string | null
           status?: string
           type: string
           user_id: string
@@ -236,8 +238,50 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          method_id?: string | null
           status?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_method_id_fkey"
+            columns: ["method_id"]
+            isOneToOne: false
+            referencedRelation: "withdrawal_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      withdrawal_methods: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          is_default: boolean
+          kind: string
+          label: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_default?: boolean
+          kind: string
+          label: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_default?: boolean
+          kind?: string
+          label?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

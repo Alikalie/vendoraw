@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import { ArrowDownToLine, ArrowUpFromLine, Copy, LogOut, ShieldAlert, LifeBuoy, FileText, Wallet } from "lucide-react";
+import { WithdrawalMethodsManager } from "@/components/app/WithdrawalMethods";
+import { WithdrawDialog } from "@/components/app/WithdrawDialog";
 
 export const Route = createFileRoute("/app/profile")({
   component: ProfileTab,
@@ -14,6 +16,22 @@ function ProfileTab() {
   const { profile, refreshProfile, signOut } = useAuth();
   const nav = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [showMethods, setShowMethods] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
+  const [history, setHistory] = useState<{ id: string; amount: number; currency: string; status: string; description: string | null; created_at: string }[]>([]);
+
+  const loadHistory = async () => {
+    if (!profile) return;
+    const { data } = await supabase
+      .from("transactions")
+      .select("id,amount,currency,status,description,created_at")
+      .eq("user_id", profile.id)
+      .eq("type", "withdraw")
+      .order("created_at", { ascending: false })
+      .limit(10);
+    setHistory(data ?? []);
+  };
+  useEffect(() => { loadHistory(); /* eslint-disable-next-line */ }, [profile?.id]);
 
   if (!profile) return null;
   const cur = profile.currency;
@@ -33,23 +51,9 @@ function ProfileTab() {
     toast.success(`Deposited ${formatMoney(amt, cur)}`);
   };
 
-  const withdraw = async () => {
-    const raw = window.prompt(`Withdraw amount in ${cur}:`, "50");
-    if (!raw) return;
-    const amt = Number(raw);
-    if (!isFinite(amt) || amt <= 0) return toast.error("Invalid amount");
-    if (amt > profile.balance) return toast.error("Insufficient balance");
-    setBusy(true);
-    await supabase.from("profiles").update({
-      balance: profile.balance - amt,
-      total_withdrawn: profile.total_withdrawn + amt,
-    }).eq("id", profile.id);
-    await supabase.from("transactions").insert({
-      user_id: profile.id, type: "withdraw", amount: amt, currency: cur, description: "Wallet withdrawal (simulated)",
-    });
+  const onWithdrawDone = async () => {
     await refreshProfile();
-    setBusy(false);
-    toast.success(`Withdrew ${formatMoney(amt, cur)}`);
+    await loadHistory();
   };
 
   const copyRef = async () => {
@@ -88,7 +92,7 @@ function ProfileTab() {
         <button disabled={busy} onClick={deposit} className="flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
           <ArrowDownToLine className="h-4 w-4" /> Deposit
         </button>
-        <button disabled={busy} onClick={withdraw} className="flex items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-semibold hover:bg-card disabled:opacity-50">
+        <button onClick={() => setShowWithdraw(true)} className="flex items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-semibold hover:bg-card">
           <ArrowUpFromLine className="h-4 w-4" /> Withdraw
         </button>
       </div>
@@ -109,10 +113,45 @@ function ProfileTab() {
 
       {/* Menu */}
       <div className="rounded-2xl border border-border bg-card divide-y divide-border">
-        <Row icon={Wallet} label="Withdrawal methods" hint="Coming soon" />
+        <button onClick={() => setShowMethods(true)} className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
+          <div className="flex items-center gap-3">
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">Withdrawal methods</span>
+          </div>
+          <span className="text-[11px] text-muted-foreground">Manage</span>
+        </button>
         <Row icon={LifeBuoy} label="Contact support" hint="support@vendora.app" />
         <Row icon={FileText} label="Privacy & terms" />
       </div>
+
+      {/* Withdrawal history */}
+      <section>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Withdrawal history</h2>
+          <span className="text-[11px] text-muted-foreground">Last 10</span>
+        </div>
+        <div className="space-y-2">
+          {history.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-border p-5 text-center text-xs text-muted-foreground">
+              No withdrawals yet.
+            </div>
+          )}
+          {history.map((h) => (
+            <div key={h.id} className="flex items-center justify-between rounded-2xl border border-border bg-card p-3">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold truncate">{h.description ?? "Withdrawal"}</div>
+                <div className="text-[11px] text-muted-foreground">{new Date(h.created_at).toLocaleString()}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-bold">-{formatMoney(h.amount, h.currency)}</div>
+                <div className={`text-[10px] capitalize ${h.status === "completed" ? "text-success" : h.status === "pending" ? "text-warning" : "text-muted-foreground"}`}>
+                  {h.status}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Disclaimer */}
       <div className="flex gap-2 rounded-2xl border border-warning/40 bg-warning/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
@@ -123,6 +162,9 @@ function ProfileTab() {
       <button onClick={doSignOut} className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 py-3 text-sm font-semibold text-destructive hover:bg-destructive/10">
         <LogOut className="h-4 w-4" /> Sign out
       </button>
+
+      {showMethods && <WithdrawalMethodsManager onClose={() => setShowMethods(false)} />}
+      {showWithdraw && <WithdrawDialog onClose={() => setShowWithdraw(false)} onDone={onWithdrawDone} onManageMethods={() => setShowMethods(true)} />}
     </div>
   );
 }
