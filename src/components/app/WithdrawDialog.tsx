@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { formatMoney } from "@/data/countries";
 import { requestWithdrawal } from "@/server/withdrawals";
 import type { WithdrawalMethod } from "./WithdrawalMethods";
+import { callAuthed } from "@/lib/server-call";
 
 export function WithdrawDialog({ onClose, onDone, onManageMethods }: { onClose: () => void; onDone: () => void; onManageMethods: () => void }) {
   const { profile } = useAuth();
@@ -35,7 +36,7 @@ export function WithdrawDialog({ onClose, onDone, onManageMethods }: { onClose: 
     if (!methodId) return toast.error("Select a withdrawal method");
     setBusy(true);
     try {
-      await requestWithdrawal({ data: { amount: amt, methodId } });
+      await callAuthed(requestWithdrawal, { amount: amt, methodId });
       toast.success("Withdrawal requested");
       onDone();
       onClose();
