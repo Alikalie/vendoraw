@@ -48,7 +48,19 @@ function TxDetail() {
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [txId]);
+  useEffect(() => {
+    load();
+    const ch = supabase
+      .channel(`tx-${txId}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "transactions", filter: `id=eq.${txId}` },
+        (payload) => setTx(payload.new as Tx),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+    /* eslint-disable-next-line */
+  }, [txId]);
 
   if (!tx) {
     return (
@@ -68,11 +80,20 @@ function TxDetail() {
 
   const setStatus = async (next: "completed" | "rejected") => {
     setBusy(true);
-    const { error } = await supabase.from("transactions").update({ status: next }).eq("id", tx.id);
+    // Optimistic update
+    setTx({ ...tx, status: next });
+    const { error } = await supabase
+      .from("transactions")
+      .update({ status: next })
+      .eq("id", tx.id)
+      .eq("status", "pending");
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      load();
+      return;
+    }
     toast.success(`Marked ${next}`);
-    load();
   };
 
   const copy = async (val: string, label: string) => {

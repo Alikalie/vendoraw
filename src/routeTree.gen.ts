@@ -20,6 +20,7 @@ import { Route as AppSellsRouteImport } from './routes/app/sells'
 import { Route as AppProfileRouteImport } from './routes/app/profile'
 import { Route as AppMarketRouteImport } from './routes/app/market'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
+import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -76,6 +77,11 @@ const AppTransactionsTxIdRoute = AppTransactionsTxIdRouteImport.update({
   path: '/$txId',
   getParentRoute: () => AppTransactionsRoute,
 } as any)
+const AppAdminWithdrawalsRoute = AppAdminWithdrawalsRouteImport.update({
+  id: '/admin/withdrawals',
+  path: '/admin/withdrawals',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
 }
 export interface FileRoutesByTo {
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
 }
 export interface FileRoutesById {
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
 }
 export interface FileRouteTypes {
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
+    | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app'
+    | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
   id:
     | '__root__'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
+    | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
   fileRoutesById: FileRoutesById
 }
@@ -243,6 +255,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTransactionsTxIdRouteImport
       parentRoute: typeof AppTransactionsRoute
     }
+    '/app/admin/withdrawals': {
+      id: '/app/admin/withdrawals'
+      path: '/admin/withdrawals'
+      fullPath: '/app/admin/withdrawals'
+      preLoaderRoute: typeof AppAdminWithdrawalsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -265,6 +284,7 @@ interface AppRouteChildren {
   AppTransactionsRoute: typeof AppTransactionsRouteWithChildren
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminWithdrawalsRoute: typeof AppAdminWithdrawalsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -274,6 +294,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTransactionsRoute: AppTransactionsRouteWithChildren,
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminWithdrawalsRoute: AppAdminWithdrawalsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
