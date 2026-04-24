@@ -89,15 +89,20 @@ function WithdrawalsTab() {
           <p className="text-xs text-muted-foreground mt-0.5">Track your payout requests and statuses</p>
         </div>
         {isAdmin && (
-          <button
-            onClick={() => setAdminView((v) => !v)}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-              adminView ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <ShieldCheck className="h-3 w-3" />
-            {adminView ? "Admin: All" : "Admin view"}
-          </button>
+          <div className="flex flex-col items-end gap-1.5">
+            <Link
+              to="/app/admin/withdrawals"
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary px-3 py-1.5 text-[11px] font-semibold text-primary-foreground hover:opacity-90"
+            >
+              <ShieldCheck className="h-3 w-3" /> Admin queue
+            </Link>
+            <button
+              onClick={() => setAdminView((v) => !v)}
+              className={`text-[10px] font-medium ${adminView ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {adminView ? "Showing all users" : "Show all users"}
+            </button>
+          </div>
         )}
       </div>
 
