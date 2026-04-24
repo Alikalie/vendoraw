@@ -52,7 +52,25 @@ function WithdrawalsTab() {
     setRows((data as Row[]) ?? []);
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [profile?.id, isAdmin, adminView]);
+  useEffect(() => {
+    load();
+    if (!profile) return;
+    const ch = supabase
+      .channel(`tx-withdraw-${profile.id}-${adminView ? "all" : "self"}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "transactions",
+          filter: adminView && isAdmin ? "type=eq.withdraw" : `user_id=eq.${profile.id}`,
+        },
+        () => load(),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+    /* eslint-disable-next-line */
+  }, [profile?.id, isAdmin, adminView]);
 
   const filtered = tab === "all" ? rows : rows.filter((r) => r.status === tab || (tab === "failed" && r.status === "rejected"));
 
