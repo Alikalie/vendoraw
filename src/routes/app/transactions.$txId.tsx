@@ -133,7 +133,7 @@ function TxDetail() {
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button disabled={busy} onClick={() => setStatus("completed")}
-              className="rounded-xl bg-success py-2.5 text-sm font-semibold text-success-foreground hover:opacity-90 disabled:opacity-50">
+              className="rounded-xl bg-success py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50">
               Approve
             </button>
             <button disabled={busy} onClick={() => setStatus("rejected")}
