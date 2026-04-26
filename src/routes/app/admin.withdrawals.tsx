@@ -175,6 +175,7 @@ function AdminWithdrawals() {
           </p>
         </div>
         <Link to="/app/withdrawals" className="text-[11px] text-muted-foreground hover:text-foreground">My withdrawals →</Link>
+        <Link to="/app/admin/deposits" className="ml-2 text-[11px] text-primary hover:underline">Deposit queue →</Link>
       </div>
 
       {/* Bulk action bar */}
