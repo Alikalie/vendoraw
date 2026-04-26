@@ -16,6 +16,11 @@ export type Profile = {
   total_withdrawn: number;
   referral_code: string;
   referred_by: string | null;
+  is_blocked: boolean;
+  profile_locked: boolean;
+  currency_locked_until: string;
+  total_invested: number;
+  theme: string;
 };
 
 type Ctx = {

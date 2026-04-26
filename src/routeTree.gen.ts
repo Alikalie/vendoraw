@@ -16,9 +16,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppWithdrawalsRouteImport } from './routes/app/withdrawals'
 import { Route as AppTransactionsRouteImport } from './routes/app/transactions'
+import { Route as AppSupportRouteImport } from './routes/app/support'
 import { Route as AppSellsRouteImport } from './routes/app/sells'
 import { Route as AppProfileRouteImport } from './routes/app/profile'
+import { Route as AppPrivacyRouteImport } from './routes/app/privacy'
 import { Route as AppMarketRouteImport } from './routes/app/market'
+import { Route as AppDepositRouteImport } from './routes/app/deposit'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
 import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
 
@@ -57,6 +60,11 @@ const AppTransactionsRoute = AppTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSupportRoute = AppSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSellsRoute = AppSellsRouteImport.update({
   id: '/sells',
   path: '/sells',
@@ -67,9 +75,19 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPrivacyRoute = AppPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMarketRoute = AppMarketRouteImport.update({
   id: '/market',
   path: '/market',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDepositRoute = AppDepositRouteImport.update({
+  id: '/deposit',
+  path: '/deposit',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTransactionsTxIdRoute = AppTransactionsTxIdRouteImport.update({
@@ -88,9 +106,12 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
+  '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRoute
   '/app/sells': typeof AppSellsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
@@ -101,9 +122,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
+  '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRoute
   '/app/sells': typeof AppSellsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
@@ -116,9 +140,12 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
+  '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRoute
   '/app/sells': typeof AppSellsRoute
+  '/app/support': typeof AppSupportRoute
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
@@ -132,9 +159,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/register'
+    | '/app/deposit'
     | '/app/market'
+    | '/app/privacy'
     | '/app/profile'
     | '/app/sells'
+    | '/app/support'
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
@@ -145,9 +175,12 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/app/deposit'
     | '/app/market'
+    | '/app/privacy'
     | '/app/profile'
     | '/app/sells'
+    | '/app/support'
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app'
@@ -159,9 +192,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/register'
+    | '/app/deposit'
     | '/app/market'
+    | '/app/privacy'
     | '/app/profile'
     | '/app/sells'
+    | '/app/support'
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
@@ -227,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTransactionsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/support': {
+      id: '/app/support'
+      path: '/support'
+      fullPath: '/app/support'
+      preLoaderRoute: typeof AppSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/sells': {
       id: '/app/sells'
       path: '/sells'
@@ -241,11 +284,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/privacy': {
+      id: '/app/privacy'
+      path: '/privacy'
+      fullPath: '/app/privacy'
+      preLoaderRoute: typeof AppPrivacyRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/market': {
       id: '/app/market'
       path: '/market'
       fullPath: '/app/market'
       preLoaderRoute: typeof AppMarketRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/deposit': {
+      id: '/app/deposit'
+      path: '/deposit'
+      fullPath: '/app/deposit'
+      preLoaderRoute: typeof AppDepositRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/transactions/$txId': {
@@ -278,9 +335,12 @@ const AppTransactionsRouteWithChildren = AppTransactionsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppDepositRoute: typeof AppDepositRoute
   AppMarketRoute: typeof AppMarketRoute
+  AppPrivacyRoute: typeof AppPrivacyRoute
   AppProfileRoute: typeof AppProfileRoute
   AppSellsRoute: typeof AppSellsRoute
+  AppSupportRoute: typeof AppSupportRoute
   AppTransactionsRoute: typeof AppTransactionsRouteWithChildren
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -288,9 +348,12 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDepositRoute: AppDepositRoute,
   AppMarketRoute: AppMarketRoute,
+  AppPrivacyRoute: AppPrivacyRoute,
   AppProfileRoute: AppProfileRoute,
   AppSellsRoute: AppSellsRoute,
+  AppSupportRoute: AppSupportRoute,
   AppTransactionsRoute: AppTransactionsRouteWithChildren,
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,

@@ -114,13 +114,18 @@ export type Database = {
           country_code: string
           created_at: string
           currency: string
+          currency_locked_until: string
           email: string | null
           first_name: string
           id: string
+          is_blocked: boolean
           last_name: string
+          profile_locked: boolean
           referral_code: string
           referred_by: string | null
+          theme: string
           total_earned: number
+          total_invested: number
           total_withdrawn: number
           updated_at: string
         }
@@ -131,13 +136,18 @@ export type Database = {
           country_code: string
           created_at?: string
           currency?: string
+          currency_locked_until?: string
           email?: string | null
           first_name: string
           id: string
+          is_blocked?: boolean
           last_name: string
+          profile_locked?: boolean
           referral_code: string
           referred_by?: string | null
+          theme?: string
           total_earned?: number
+          total_invested?: number
           total_withdrawn?: number
           updated_at?: string
         }
@@ -148,13 +158,18 @@ export type Database = {
           country_code?: string
           created_at?: string
           currency?: string
+          currency_locked_until?: string
           email?: string | null
           first_name?: string
           id?: string
+          is_blocked?: boolean
           last_name?: string
+          profile_locked?: boolean
           referral_code?: string
           referred_by?: string | null
+          theme?: string
           total_earned?: number
+          total_invested?: number
           total_withdrawn?: number
           updated_at?: string
         }
@@ -209,6 +224,30 @@ export type Database = {
           },
         ]
       }
+      site_content: {
+        Row: {
+          body: string
+          id: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          body?: string
+          id: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          body?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -217,6 +256,8 @@ export type Database = {
           description: string | null
           id: string
           method_id: string | null
+          notes: string | null
+          proof_path: string | null
           status: string
           type: string
           user_id: string
@@ -228,6 +269,8 @@ export type Database = {
           description?: string | null
           id?: string
           method_id?: string | null
+          notes?: string | null
+          proof_path?: string | null
           status?: string
           type: string
           user_id: string
@@ -239,6 +282,8 @@ export type Database = {
           description?: string | null
           id?: string
           method_id?: string | null
+          notes?: string | null
+          proof_path?: string | null
           status?: string
           type?: string
           user_id?: string

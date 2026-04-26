@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
 import { ArrowLeft, Clock, CheckCircle2, XCircle, Copy, ShieldCheck } from "lucide-react";
+import { Download, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/transactions/$txId")({
@@ -20,6 +21,8 @@ type Tx = {
   description: string | null;
   method_id: string | null;
   created_at: string;
+  proof_path: string | null;
+  notes: string | null;
 };
 
 type Method = { id: string; kind: string; label: string; details: Record<string, unknown> };
@@ -38,6 +41,7 @@ function TxDetail() {
   const [tx, setTx] = useState<Tx | null>(null);
   const [method, setMethod] = useState<Method | null>(null);
   const [busy, setBusy] = useState(false);
+  const [proofUrl, setProofUrl] = useState<string | null>(null);
 
   const load = async () => {
     const { data } = await supabase.from("transactions").select("*").eq("id", txId).maybeSingle();
@@ -45,6 +49,13 @@ function TxDetail() {
     if (data?.method_id) {
       const { data: m } = await supabase.from("withdrawal_methods").select("id,kind,label,details").eq("id", data.method_id).maybeSingle();
       setMethod(m as Method | null);
+    }
+    const path = (data as Tx | null)?.proof_path;
+    if (path) {
+      const { data: signed } = await supabase.storage.from("payment-proofs").createSignedUrl(path, 60 * 10);
+      setProofUrl(signed?.signedUrl ?? null);
+    } else {
+      setProofUrl(null);
     }
   };
 
@@ -140,6 +151,43 @@ function TxDetail() {
               {JSON.stringify(method.details, null, 2)}
             </pre>
           </div>
+        </section>
+      )}
+
+      {/* Payment proof viewer */}
+      {tx.proof_path && (
+        <section className="mt-5">
+          <h2 className="mb-2 text-sm font-semibold flex items-center gap-2">
+            <ImageIcon className="h-4 w-4" /> Payment proof
+          </h2>
+          <div className="rounded-2xl border border-border bg-card p-3">
+            {proofUrl ? (
+              <>
+                <a href={proofUrl} target="_blank" rel="noreferrer" className="block">
+                  <img src={proofUrl} alt="Payment proof" className="max-h-72 w-full rounded-lg object-contain bg-background/60" />
+                </a>
+                <div className="mt-2 flex gap-2">
+                  <a href={proofUrl} target="_blank" rel="noreferrer"
+                    className="flex-1 rounded-lg border border-border py-2 text-center text-xs font-medium hover:bg-background/40">
+                    Open
+                  </a>
+                  <a href={proofUrl} download
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground">
+                    <Download className="h-3 w-3" /> Download
+                  </a>
+                </div>
+              </>
+            ) : (
+              <div className="py-6 text-center text-xs text-muted-foreground">Loading proof…</div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {tx.notes && (
+        <section className="mt-5 rounded-2xl border border-border bg-card p-4">
+          <h2 className="mb-1 text-sm font-semibold">Admin notes</h2>
+          <p className="text-xs text-muted-foreground whitespace-pre-wrap">{tx.notes}</p>
         </section>
       )}
 
