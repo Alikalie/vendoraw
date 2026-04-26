@@ -154,6 +154,43 @@ function TxDetail() {
         </section>
       )}
 
+      {/* Payment proof viewer */}
+      {tx.proof_path && (
+        <section className="mt-5">
+          <h2 className="mb-2 text-sm font-semibold flex items-center gap-2">
+            <ImageIcon className="h-4 w-4" /> Payment proof
+          </h2>
+          <div className="rounded-2xl border border-border bg-card p-3">
+            {proofUrl ? (
+              <>
+                <a href={proofUrl} target="_blank" rel="noreferrer" className="block">
+                  <img src={proofUrl} alt="Payment proof" className="max-h-72 w-full rounded-lg object-contain bg-background/60" />
+                </a>
+                <div className="mt-2 flex gap-2">
+                  <a href={proofUrl} target="_blank" rel="noreferrer"
+                    className="flex-1 rounded-lg border border-border py-2 text-center text-xs font-medium hover:bg-background/40">
+                    Open
+                  </a>
+                  <a href={proofUrl} download
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground">
+                    <Download className="h-3 w-3" /> Download
+                  </a>
+                </div>
+              </>
+            ) : (
+              <div className="py-6 text-center text-xs text-muted-foreground">Loading proof…</div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {tx.notes && (
+        <section className="mt-5 rounded-2xl border border-border bg-card p-4">
+          <h2 className="mb-1 text-sm font-semibold">Admin notes</h2>
+          <p className="text-xs text-muted-foreground whitespace-pre-wrap">{tx.notes}</p>
+        </section>
+      )}
+
       {/* Admin moderation */}
       {canModerate && (
         <section className="mt-5 rounded-2xl border border-primary/40 bg-primary/5 p-4">
