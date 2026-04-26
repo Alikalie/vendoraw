@@ -133,6 +133,24 @@ function ProfileTab() {
 
       {/* Settings menu */}
       <div className="rounded-2xl border border-border bg-card divide-y divide-border">
+        {isAdmin && (
+          <>
+            <Link to="/app/admin/deposits" className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                <span className="text-sm">Admin · Deposit approvals</span>
+              </div>
+              <span className="text-[11px] text-muted-foreground">Open</span>
+            </Link>
+            <Link to="/app/admin/withdrawals" className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                <span className="text-sm">Admin · Withdrawal queue</span>
+              </div>
+              <span className="text-[11px] text-muted-foreground">Open</span>
+            </Link>
+          </>
+        )}
         <button onClick={() => setShowMethods(true)} className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
           <div className="flex items-center gap-3">
             <Wallet className="h-4 w-4 text-muted-foreground" />
