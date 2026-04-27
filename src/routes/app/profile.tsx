@@ -135,6 +135,13 @@ function ProfileTab() {
       <div className="rounded-2xl border border-border bg-card divide-y divide-border">
         {isAdmin && (
           <>
+            <Link to="/app/admin" className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
+              <div className="flex items-center gap-3">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                <span className="text-sm font-semibold">Admin dashboard</span>
+              </div>
+              <span className="text-[11px] text-primary">Open</span>
+            </Link>
             <Link to="/app/admin/deposits" className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-background/30">
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-4 w-4 text-primary" />
