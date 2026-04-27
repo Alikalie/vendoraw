@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldAlert, TrendingUp, Wallet, Repeat, Users } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, ShieldAlert, TrendingUp, Wallet, Repeat, Users, Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [navOpen, setNavOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Top nav */}
@@ -23,7 +25,7 @@ function Index() {
             <div className="h-8 w-8 rounded-lg" style={{ background: "var(--gradient-primary)" }} />
             <span className="text-lg font-bold tracking-tight">Vendora</span>
           </Link>
-          <nav className="flex items-center gap-2">
+          <nav className="hidden items-center gap-2 sm:flex">
             <Link to="/login" className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
               Log in
             </Link>
@@ -31,7 +33,27 @@ function Index() {
               Get started
             </Link>
           </nav>
+          <button
+            type="button"
+            aria-label={navOpen ? "Close menu" : "Open menu"}
+            onClick={() => setNavOpen((v) => !v)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground sm:hidden"
+          >
+            {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+        {navOpen && (
+          <div className="border-t border-border bg-background/95 px-5 py-3 sm:hidden">
+            <Link to="/login" onClick={() => setNavOpen(false)}
+              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card hover:text-foreground">
+              Log in
+            </Link>
+            <Link to="/register" onClick={() => setNavOpen(false)}
+              className="mt-1 block rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
+              Get started
+            </Link>
+          </div>
+        )}
       </header>
 
       {/* Hero */}
