@@ -28,6 +28,7 @@ type Ctx = {
   session: Session | null;
   profile: Profile | null;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   loading: boolean;
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const loadProfile = async (uid: string) => {
@@ -49,7 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .from("user_roles" as never)
       .select("role")
       .eq("user_id", uid);
-    setIsAdmin(!!(roles as { role: string }[] | null)?.some((r) => r.role === "admin"));
+    const list = (roles as { role: string }[] | null) ?? [];
+    const sa = list.some((r) => r.role === "super_admin");
+    setIsSuperAdmin(sa);
+    setIsAdmin(sa || list.some((r) => r.role === "admin"));
   };
 
   useEffect(() => {
@@ -61,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(null);
         setIsAdmin(false);
+        setIsSuperAdmin(false);
       }
     });
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -95,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthCtx.Provider value={{ user, session, profile, isAdmin, loading, refreshProfile, signOut }}>
+    <AuthCtx.Provider value={{ user, session, profile, isAdmin, isSuperAdmin, loading, refreshProfile, signOut }}>
       {children}
     </AuthCtx.Provider>
   );
