@@ -26,6 +26,7 @@ import { Route as AppAdminIndexRouteImport } from './routes/app/admin.index'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
 import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
 import { Route as AppAdminUsersRouteImport } from './routes/app/admin.users'
+import { Route as AppAdminProductsRouteImport } from './routes/app/admin.products'
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -113,6 +114,11 @@ const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminProductsRoute = AppAdminProductsRouteImport.update({
+  id: '/admin/products',
+  path: '/admin/products',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminDepositsRoute = AppAdminDepositsRouteImport.update({
   id: '/admin/deposits',
   path: '/admin/deposits',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/app/admin/deposits'
+    | '/app/admin/products'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app'
     | '/app/admin/deposits'
+    | '/app/admin/products'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/app/admin/deposits'
+    | '/app/admin/products'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -369,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminUsersRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/products': {
+      id: '/app/admin/products'
+      path: '/admin/products'
+      fullPath: '/app/admin/products'
+      preLoaderRoute: typeof AppAdminProductsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/deposits': {
       id: '/app/admin/deposits'
       path: '/admin/deposits'
@@ -402,6 +421,7 @@ interface AppRouteChildren {
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAdminDepositsRoute: typeof AppAdminDepositsRoute
+  AppAdminProductsRoute: typeof AppAdminProductsRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppAdminWithdrawalsRoute: typeof AppAdminWithdrawalsRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -418,6 +438,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,
   AppAdminDepositsRoute: AppAdminDepositsRoute,
+  AppAdminProductsRoute: AppAdminProductsRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppAdminWithdrawalsRoute: AppAdminWithdrawalsRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
