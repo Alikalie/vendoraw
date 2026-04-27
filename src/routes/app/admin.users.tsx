@@ -57,7 +57,7 @@ function AdminUsers() {
       .select("id,first_name,last_name,email,contact,country,currency,balance,total_invested,total_withdrawn,is_blocked,profile_locked,created_at")
       .order("created_at", { ascending: false }).limit(500);
     setRows((data as Row[]) ?? []);
-    const { data: r } = await supabase.from("user_roles" as never).select("user_id,role");
+    const { data: r } = await supabase.from("user_roles").select("user_id,role");
     setRoles((r as RoleRow[]) ?? []);
     setLoading(false);
   };
