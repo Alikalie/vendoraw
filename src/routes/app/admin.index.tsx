@@ -50,7 +50,7 @@ function AdminHome() {
           return (
             <Link
               key={c.to}
-              to={c.to as "/app/admin/users"}
+              to={c.to}
               className="group rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
             >
               <div className="flex items-center gap-3">
