@@ -98,7 +98,7 @@ function AdminUsers() {
   const promote = async (u: Row, role: "admin" | "super_admin") => {
     if (!isSuperAdmin) return toast.error("Only super-admin can change roles");
     setBusy(u.id);
-    const { error } = await supabase.from("user_roles" as never).insert({ user_id: u.id, role });
+    const { error } = await supabase.from("user_roles").insert({ user_id: u.id, role });
     setBusy(null);
     if (error) return toast.error(error.message);
     toast.success(`Granted ${role}`);
@@ -109,8 +109,8 @@ function AdminUsers() {
     if (!isSuperAdmin) return toast.error("Only super-admin can change roles");
     if (role === "super_admin" && u.id === user?.id) return toast.error("You cannot revoke your own super-admin");
     setBusy(u.id);
-    const { error } = await supabase.from("user_roles" as never)
-      .delete().eq("user_id", u.id).eq("role", role);
+    const { error } = await supabase.from("user_roles")
+      .delete().eq("user_id", u.id).eq("role", role as "admin" | "super_admin" | "user");
     setBusy(null);
     if (error) return toast.error(error.message);
     toast.success(`Revoked ${role}`);

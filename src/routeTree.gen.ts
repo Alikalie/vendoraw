@@ -25,6 +25,7 @@ import { Route as AppDepositRouteImport } from './routes/app/deposit'
 import { Route as AppAdminIndexRouteImport } from './routes/app/admin.index'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
 import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
+import { Route as AppAdminUsersRouteImport } from './routes/app/admin.users'
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -107,6 +108,11 @@ const AppAdminWithdrawalsRoute = AppAdminWithdrawalsRouteImport.update({
   path: '/admin/withdrawals',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminDepositsRoute = AppAdminDepositsRouteImport.update({
   id: '/admin/deposits',
   path: '/admin/deposits',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/app/admin/deposits'
+    | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
     | '/app/admin/'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app'
     | '/app/admin/deposits'
+    | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
     | '/app/admin'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/app/admin/deposits'
+    | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
     | '/app/admin/'
@@ -350,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminWithdrawalsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/users': {
+      id: '/app/admin/users'
+      path: '/admin/users'
+      fullPath: '/app/admin/users'
+      preLoaderRoute: typeof AppAdminUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/deposits': {
       id: '/app/admin/deposits'
       path: '/admin/deposits'
@@ -383,6 +402,7 @@ interface AppRouteChildren {
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAdminDepositsRoute: typeof AppAdminDepositsRoute
+  AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppAdminWithdrawalsRoute: typeof AppAdminWithdrawalsRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
@@ -398,6 +418,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,
   AppAdminDepositsRoute: AppAdminDepositsRoute,
+  AppAdminUsersRoute: AppAdminUsersRoute,
   AppAdminWithdrawalsRoute: AppAdminWithdrawalsRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
 }
