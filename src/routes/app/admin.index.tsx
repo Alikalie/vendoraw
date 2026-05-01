@@ -92,7 +92,7 @@ function AdminHome() {
   const refreshFx = async () => {
     setRefreshingFx(true);
     try {
-      const res = await callAuthed(refreshExchangeRates, undefined as unknown as void);
+      const res = await callAuthed(refreshExchangeRates as unknown as (opts: { data: undefined; headers?: Record<string, string> }) => Promise<Awaited<ReturnType<typeof refreshExchangeRates>>>, undefined);
       if (res.ok) toast.success(`Updated ${res.updated} currencies`);
       else toast.error(res.error ?? "FX refresh failed");
     } catch (e) {
@@ -221,13 +221,13 @@ function AdminHome() {
       </div>
 
       {isSuperAdmin && (
-        <Link to="/app/admin/audit" className="mt-4 flex items-center gap-3 rounded-2xl border border-warning/30 bg-warning/5 p-4 hover:border-warning/60">
+        <div className="mt-4 flex items-center gap-3 rounded-2xl border border-warning/30 bg-warning/5 p-4">
           <BookOpen className="h-5 w-5 text-warning" />
           <div className="flex-1">
             <div className="text-sm font-semibold">Audit log</div>
-            <div className="text-[11px] text-muted-foreground">Every admin action, who did it & when (super-admin only)</div>
+            <div className="text-[11px] text-muted-foreground">Every admin action recorded — view coming next iteration</div>
           </div>
-        </Link>
+        </div>
       )}
     </div>
   );
