@@ -16,9 +16,11 @@ export async function loadRates(): Promise<Record<string, number>> {
     ((data as { currency: string; rate: number }[] | null) ?? []).forEach((r) => {
       map[r.currency] = Number(r.rate);
     });
-    cache = map;
-    inflight = null;
-    return map;
+      cache = map;
+      // Expose to legacy convertFromUsd consumers.
+      (globalThis as unknown as { __fxCache?: Record<string, number> }).__fxCache = map;
+      inflight = null;
+      return map;
   })();
   return inflight;
 }
