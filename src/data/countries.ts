@@ -137,7 +137,16 @@ export const usdRates: Record<string, number> = {
 };
 
 export function convertFromUsd(amountUsd: number, currency: string): number {
-  const r = usdRates[currency] ?? 1;
+  // Prefer live cache (hydrated by auth-context via lib/fx) when available.
+  // Lazy import to avoid cycle.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  let live: number | undefined;
+  try {
+    // dynamic require pattern not available in ESM bundler; use globalThis bag
+    const g = globalThis as unknown as { __fxCache?: Record<string, number> };
+    if (g.__fxCache && g.__fxCache[currency] != null) live = g.__fxCache[currency];
+  } catch { /* ignore */ }
+  const r = live ?? usdRates[currency] ?? 1;
   return amountUsd * r;
 }
 
