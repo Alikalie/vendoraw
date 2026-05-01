@@ -29,6 +29,7 @@ import { Route as AppAdminUsersRouteImport } from './routes/app/admin.users'
 import { Route as AppAdminProductsRouteImport } from './routes/app/admin.products'
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 import { Route as AppAdminContentRouteImport } from './routes/app/admin.content'
+import { Route as ApiPublicFxRefreshRouteImport } from './routes/api/public/fx-refresh'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -130,6 +131,11 @@ const AppAdminContentRoute = AppAdminContentRouteImport.update({
   path: '/admin/content',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiPublicFxRefreshRoute = ApiPublicFxRefreshRouteImport.update({
+  id: '/api/public/fx-refresh',
+  path: '/api/public/fx-refresh',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
+  '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/app/transactions': typeof AppTransactionsRouteWithChildren
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
+  '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
+    | '/api/public/fx-refresh'
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/products'
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app'
+    | '/api/public/fx-refresh'
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/products'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/withdrawals'
     | '/app/'
+    | '/api/public/fx-refresh'
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/products'
@@ -270,6 +282,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ApiPublicFxRefreshRoute: typeof ApiPublicFxRefreshRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -414,6 +427,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminContentRouteImport
       parentRoute: typeof AppRoute
     }
+    '/api/public/fx-refresh': {
+      id: '/api/public/fx-refresh'
+      path: '/api/public/fx-refresh'
+      fullPath: '/api/public/fx-refresh'
+      preLoaderRoute: typeof ApiPublicFxRefreshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ApiPublicFxRefreshRoute: ApiPublicFxRefreshRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { loadRates } from "@/lib/fx";
 
 export type Profile = {
   id: string;
@@ -58,6 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Hydrate FX rates once; safe to call repeatedly (idempotent cache).
+    loadRates().catch(() => { /* fall back to static rates */ });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);

@@ -95,7 +95,7 @@ export const countries: Country[] = [
   { name: "Saudi Arabia", code: "SA", dial: "+966", currency: "SAR", symbol: "ر.س" },
   { name: "Senegal", code: "SN", dial: "+221", currency: "XOF", symbol: "CFA" },
   { name: "Serbia", code: "RS", dial: "+381", currency: "RSD", symbol: "дин." },
-  { name: "Sierra Leone", code: "SL", dial: "+232", currency: "SLL", symbol: "Le" },
+  { name: "Sierra Leone", code: "SL", dial: "+232", currency: "SLE", symbol: "Le" },
   { name: "Singapore", code: "SG", dial: "+65", currency: "SGD", symbol: "S$" },
   { name: "Slovakia", code: "SK", dial: "+421", currency: "EUR", symbol: "€" },
   { name: "Slovenia", code: "SI", dial: "+386", currency: "EUR", symbol: "€" },
@@ -130,11 +130,23 @@ export const countries: Country[] = [
 export const usdRates: Record<string, number> = {
   USD: 1, EUR: 0.92, GBP: 0.79, NGN: 1600, GHS: 15, KES: 130, ZAR: 18, INR: 83,
   CAD: 1.36, AUD: 1.52, JPY: 155, CNY: 7.2, BRL: 5.1, MXN: 17.2, EGP: 49,
-  SLL: 22500, XOF: 605, XAF: 605, GMD: 70, LRD: 190, SGD: 1.34, HKD: 7.8,
+  SLE: 22.5, XOF: 605, XAF: 605, GMD: 70, LRD: 190, SGD: 1.34, HKD: 7.8,
+  TZS: 2600, UGX: 3700, RWF: 1300, ETB: 56, MAD: 10, TND: 3.1, DZD: 134,
+  ZMW: 26, MWK: 1700, MZN: 64, AED: 3.67, SAR: 3.75, QAR: 3.64, TRY: 32,
+  CHF: 0.88, SEK: 10.5, NOK: 10.7, DKK: 6.85,
 };
 
 export function convertFromUsd(amountUsd: number, currency: string): number {
-  const r = usdRates[currency] ?? 1;
+  // Prefer live cache (hydrated by auth-context via lib/fx) when available.
+  // Lazy import to avoid cycle.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  let live: number | undefined;
+  try {
+    // dynamic require pattern not available in ESM bundler; use globalThis bag
+    const g = globalThis as unknown as { __fxCache?: Record<string, number> };
+    if (g.__fxCache && g.__fxCache[currency] != null) live = g.__fxCache[currency];
+  } catch { /* ignore */ }
+  const r = live ?? usdRates[currency] ?? 1;
   return amountUsd * r;
 }
 
