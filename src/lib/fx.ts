@@ -8,18 +8,18 @@ let inflight: Promise<Record<string, number>> | null = null;
 export async function loadRates(): Promise<Record<string, number>> {
   if (cache) return cache;
   if (inflight) return inflight;
-  inflight = supabase
-    .from("exchange_rates" as never)
-    .select("currency,rate")
-    .then(({ data }) => {
-      const map: Record<string, number> = { ...usdRates };
-      ((data as { currency: string; rate: number }[] | null) ?? []).forEach((r) => {
-        map[r.currency] = Number(r.rate);
-      });
-      cache = map;
-      inflight = null;
-      return map;
+  inflight = (async () => {
+    const { data } = await supabase
+      .from("exchange_rates" as never)
+      .select("currency,rate");
+    const map: Record<string, number> = { ...usdRates };
+    ((data as { currency: string; rate: number }[] | null) ?? []).forEach((r) => {
+      map[r.currency] = Number(r.rate);
     });
+    cache = map;
+    inflight = null;
+    return map;
+  })();
   return inflight;
 }
 
