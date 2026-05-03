@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
 import { ArrowDownToLine, ArrowUpFromLine, ShoppingBag, TrendingUp, Users, Tag } from "lucide-react";
+import { ScreenHeader } from "@/components/app/ScreenHeader";
 
 type Tx = { id: string; type: string; amount: number; currency: string; status: string; description: string | null; created_at: string };
 
@@ -55,8 +56,28 @@ function TxTab() {
 
   const filtered = tab === "all" ? items : items.filter((i) => i.type === tab);
 
+  const labelFor = (tx: Tx) => {
+    const base = tx.type.replace("_", " ");
+    if (tx.status === "pending") {
+      if (tx.type === "deposit") return "Deposit requested";
+      if (tx.type === "withdraw") return "Withdraw requested";
+    }
+    if (tx.status === "completed") {
+      if (tx.type === "deposit") return "Deposit completed";
+      if (tx.type === "withdraw") return "Withdraw completed";
+      if (tx.type === "buy") return "Investment active";
+      if (tx.type === "earning") return "Daily earning";
+    }
+    if (tx.status === "rejected") {
+      if (tx.type === "deposit") return "Deposit rejected";
+      if (tx.type === "withdraw") return "Withdraw rejected";
+    }
+    return base;
+  };
+
   return (
     <div className="px-5 pt-6 pb-6">
+      <ScreenHeader title="Activity" />
       <h1 className="text-xl font-bold">Activity</h1>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {tabs.map((t) => (
@@ -94,7 +115,7 @@ function TxTab() {
                 <Icon className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold capitalize">{tx.type.replace("_", " ")}</div>
+                <div className="text-sm font-semibold">{labelFor(tx)}</div>
                 <div className="truncate text-xs text-muted-foreground">{tx.description ?? new Date(tx.created_at).toLocaleString()}</div>
               </div>
               <div className="text-right">
