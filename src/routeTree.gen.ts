@@ -26,9 +26,14 @@ import { Route as AppAdminIndexRouteImport } from './routes/app/admin.index'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
 import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
 import { Route as AppAdminUsersRouteImport } from './routes/app/admin.users'
+import { Route as AppAdminTransactionsRouteImport } from './routes/app/admin.transactions'
+import { Route as AppAdminSettingsRouteImport } from './routes/app/admin.settings'
+import { Route as AppAdminReferralsRouteImport } from './routes/app/admin.referrals'
 import { Route as AppAdminProductsRouteImport } from './routes/app/admin.products'
+import { Route as AppAdminInvestmentsRouteImport } from './routes/app/admin.investments'
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 import { Route as AppAdminContentRouteImport } from './routes/app/admin.content'
+import { Route as AppAdminAuditRouteImport } from './routes/app/admin.audit'
 import { Route as ApiPublicFxRefreshRouteImport } from './routes/api/public/fx-refresh'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -116,9 +121,29 @@ const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminTransactionsRoute = AppAdminTransactionsRouteImport.update({
+  id: '/admin/transactions',
+  path: '/admin/transactions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminSettingsRoute = AppAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminReferralsRoute = AppAdminReferralsRouteImport.update({
+  id: '/admin/referrals',
+  path: '/admin/referrals',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminProductsRoute = AppAdminProductsRouteImport.update({
   id: '/admin/products',
   path: '/admin/products',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminInvestmentsRoute = AppAdminInvestmentsRouteImport.update({
+  id: '/admin/investments',
+  path: '/admin/investments',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminDepositsRoute = AppAdminDepositsRouteImport.update({
@@ -129,6 +154,11 @@ const AppAdminDepositsRoute = AppAdminDepositsRouteImport.update({
 const AppAdminContentRoute = AppAdminContentRouteImport.update({
   id: '/admin/content',
   path: '/admin/content',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
+  id: '/admin/audit',
+  path: '/admin/audit',
   getParentRoute: () => AppRoute,
 } as any)
 const ApiPublicFxRefreshRoute = ApiPublicFxRefreshRouteImport.update({
@@ -152,9 +182,14 @@ export interface FileRoutesByFullPath {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/investments': typeof AppAdminInvestmentsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
+  '/app/admin/referrals': typeof AppAdminReferralsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
+  '/app/admin/transactions': typeof AppAdminTransactionsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -174,9 +209,14 @@ export interface FileRoutesByTo {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/investments': typeof AppAdminInvestmentsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
+  '/app/admin/referrals': typeof AppAdminReferralsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
+  '/app/admin/transactions': typeof AppAdminTransactionsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -198,9 +238,14 @@ export interface FileRoutesById {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
+  '/app/admin/investments': typeof AppAdminInvestmentsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
+  '/app/admin/referrals': typeof AppAdminReferralsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
+  '/app/admin/transactions': typeof AppAdminTransactionsRoute
   '/app/admin/users': typeof AppAdminUsersRoute
   '/app/admin/withdrawals': typeof AppAdminWithdrawalsRoute
   '/app/transactions/$txId': typeof AppTransactionsTxIdRoute
@@ -223,9 +268,14 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/api/public/fx-refresh'
+    | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
+    | '/app/admin/investments'
     | '/app/admin/products'
+    | '/app/admin/referrals'
+    | '/app/admin/settings'
+    | '/app/admin/transactions'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -245,9 +295,14 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app'
     | '/api/public/fx-refresh'
+    | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
+    | '/app/admin/investments'
     | '/app/admin/products'
+    | '/app/admin/referrals'
+    | '/app/admin/settings'
+    | '/app/admin/transactions'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -268,9 +323,14 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/api/public/fx-refresh'
+    | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
+    | '/app/admin/investments'
     | '/app/admin/products'
+    | '/app/admin/referrals'
+    | '/app/admin/settings'
+    | '/app/admin/transactions'
     | '/app/admin/users'
     | '/app/admin/withdrawals'
     | '/app/transactions/$txId'
@@ -406,11 +466,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminUsersRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/transactions': {
+      id: '/app/admin/transactions'
+      path: '/admin/transactions'
+      fullPath: '/app/admin/transactions'
+      preLoaderRoute: typeof AppAdminTransactionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/settings': {
+      id: '/app/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/app/admin/settings'
+      preLoaderRoute: typeof AppAdminSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/referrals': {
+      id: '/app/admin/referrals'
+      path: '/admin/referrals'
+      fullPath: '/app/admin/referrals'
+      preLoaderRoute: typeof AppAdminReferralsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/products': {
       id: '/app/admin/products'
       path: '/admin/products'
       fullPath: '/app/admin/products'
       preLoaderRoute: typeof AppAdminProductsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/investments': {
+      id: '/app/admin/investments'
+      path: '/admin/investments'
+      fullPath: '/app/admin/investments'
+      preLoaderRoute: typeof AppAdminInvestmentsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/deposits': {
@@ -425,6 +513,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/content'
       fullPath: '/app/admin/content'
       preLoaderRoute: typeof AppAdminContentRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/audit': {
+      id: '/app/admin/audit'
+      path: '/admin/audit'
+      fullPath: '/app/admin/audit'
+      preLoaderRoute: typeof AppAdminAuditRouteImport
       parentRoute: typeof AppRoute
     }
     '/api/public/fx-refresh': {
@@ -459,9 +554,14 @@ interface AppRouteChildren {
   AppTransactionsRoute: typeof AppTransactionsRouteWithChildren
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminAuditRoute: typeof AppAdminAuditRoute
   AppAdminContentRoute: typeof AppAdminContentRoute
   AppAdminDepositsRoute: typeof AppAdminDepositsRoute
+  AppAdminInvestmentsRoute: typeof AppAdminInvestmentsRoute
   AppAdminProductsRoute: typeof AppAdminProductsRoute
+  AppAdminReferralsRoute: typeof AppAdminReferralsRoute
+  AppAdminSettingsRoute: typeof AppAdminSettingsRoute
+  AppAdminTransactionsRoute: typeof AppAdminTransactionsRoute
   AppAdminUsersRoute: typeof AppAdminUsersRoute
   AppAdminWithdrawalsRoute: typeof AppAdminWithdrawalsRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -477,9 +577,14 @@ const AppRouteChildren: AppRouteChildren = {
   AppTransactionsRoute: AppTransactionsRouteWithChildren,
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminAuditRoute: AppAdminAuditRoute,
   AppAdminContentRoute: AppAdminContentRoute,
   AppAdminDepositsRoute: AppAdminDepositsRoute,
+  AppAdminInvestmentsRoute: AppAdminInvestmentsRoute,
   AppAdminProductsRoute: AppAdminProductsRoute,
+  AppAdminReferralsRoute: AppAdminReferralsRoute,
+  AppAdminSettingsRoute: AppAdminSettingsRoute,
+  AppAdminTransactionsRoute: AppAdminTransactionsRoute,
   AppAdminUsersRoute: AppAdminUsersRoute,
   AppAdminWithdrawalsRoute: AppAdminWithdrawalsRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,

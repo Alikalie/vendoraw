@@ -110,6 +110,7 @@ function AdminHome() {
     { to: "/app/admin/referrals", title: "Referrals", desc: "Tree, commissions & bonuses", icon: TrendingUp },
     { to: "/app/admin/content", title: "Site content (CMS)", desc: "Help, Privacy & instructions", icon: FileText },
     { to: "/app/admin/settings", title: "Settings", desc: "Bonuses, commissions, FX, fees", icon: Settings },
+    { to: "/app/admin/audit", title: "Audit log", desc: "Every admin action recorded", icon: History },
   ];
 
   return (
