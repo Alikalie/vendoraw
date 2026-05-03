@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
 import { ArrowDownToLine, ArrowUpFromLine, ShoppingBag, TrendingUp, Users, Tag } from "lucide-react";
+import { ScreenHeader } from "@/components/app/ScreenHeader";
+import { displayCurrency, convertCurrency } from "@/lib/fx";
 
 type Tx = { id: string; type: string; amount: number; currency: string; status: string; description: string | null; created_at: string };
 
@@ -54,9 +56,11 @@ function TxTab() {
   }, [profile]);
 
   const filtered = tab === "all" ? items : items.filter((i) => i.type === tab);
+  const displayCur = profile ? (profile.currency === "SLE" ? "SLE" : profile.currency) : "USD";
 
   return (
     <div className="px-5 pt-6 pb-6">
+      <ScreenHeader title="Activity" />
       <h1 className="text-xl font-bold">Activity</h1>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {tabs.map((t) => (
