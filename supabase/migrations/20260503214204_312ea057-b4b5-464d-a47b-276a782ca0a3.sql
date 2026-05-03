@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.log_admin_action(text, text, text, jsonb) FROM authenticated;
