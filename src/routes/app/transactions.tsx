@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
 import { ArrowDownToLine, ArrowUpFromLine, ShoppingBag, TrendingUp, Users, Tag } from "lucide-react";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
-import { displayCurrency, convertCurrency } from "@/lib/fx";
 
 type Tx = { id: string; type: string; amount: number; currency: string; status: string; description: string | null; created_at: string };
 
@@ -56,7 +55,25 @@ function TxTab() {
   }, [profile]);
 
   const filtered = tab === "all" ? items : items.filter((i) => i.type === tab);
-  const displayCur = profile ? (profile.currency === "SLE" ? "SLE" : profile.currency) : "USD";
+
+  const labelFor = (tx: Tx) => {
+    const base = tx.type.replace("_", " ");
+    if (tx.status === "pending") {
+      if (tx.type === "deposit") return "Deposit requested";
+      if (tx.type === "withdraw") return "Withdraw requested";
+    }
+    if (tx.status === "completed") {
+      if (tx.type === "deposit") return "Deposit completed";
+      if (tx.type === "withdraw") return "Withdraw completed";
+      if (tx.type === "buy") return "Investment active";
+      if (tx.type === "earning") return "Daily earning";
+    }
+    if (tx.status === "rejected") {
+      if (tx.type === "deposit") return "Deposit rejected";
+      if (tx.type === "withdraw") return "Withdraw rejected";
+    }
+    return base;
+  };
 
   return (
     <div className="px-5 pt-6 pb-6">
