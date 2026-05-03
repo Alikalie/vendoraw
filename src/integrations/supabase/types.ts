@@ -89,8 +89,10 @@ export type Database = {
           daily_earning: number
           duration_days: number
           earnings_accrued: number
+          earnings_paid_count: number
           end_date: string
           id: string
+          last_earning_at: string | null
           product_id: string
           purchase_price: number
           start_date: string
@@ -103,8 +105,10 @@ export type Database = {
           daily_earning: number
           duration_days: number
           earnings_accrued?: number
+          earnings_paid_count?: number
           end_date: string
           id?: string
+          last_earning_at?: string | null
           product_id: string
           purchase_price: number
           start_date?: string
@@ -117,8 +121,10 @@ export type Database = {
           daily_earning?: number
           duration_days?: number
           earnings_accrued?: number
+          earnings_paid_count?: number
           end_date?: string
           id?: string
+          last_earning_at?: string | null
           product_id?: string
           purchase_price?: number
           start_date?: string
@@ -423,7 +429,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      auth_login_history: {
+        Row: {
+          action: string | null
+          actor_email: string | null
+          created_at: string | null
+          id: string | null
+          ip_address: string | null
+          payload: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: never
+          actor_email?: never
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          payload?: Json | null
+          user_id?: never
+        }
+        Update: {
+          action?: never
+          actor_email?: never
+          created_at?: string | null
+          id?: string | null
+          ip_address?: string | null
+          payload?: Json | null
+          user_id?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       gen_referral_code: { Args: never; Returns: string }
@@ -443,6 +478,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      process_daily_earnings: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "user" | "super_admin"
