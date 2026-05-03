@@ -156,3 +156,21 @@ export function formatMoney(amount: number, currency: string): string {
   const rounded = amount >= 100 ? Math.round(amount).toLocaleString() : amount.toFixed(2);
   return `${sym}${rounded}`;
 }
+
+/**
+ * SLE (Sierra Leone Leone) is only shown to Sierra Leoneans. For every other
+ * profile we display USD. Returns the currency the UI should use given the
+ * user's stored profile currency.
+ */
+export function displayCurrency(profileCurrency: string): string {
+  if (profileCurrency === "SLE") return "SLE";
+  return profileCurrency;
+}
+
+/**
+ * Convenience: convert a USD amount to the user's display currency and format.
+ */
+export function formatUsd(amountUsd: number, profileCurrency: string): string {
+  const display = displayCurrency(profileCurrency);
+  return formatMoney(convertFromUsd(amountUsd, display), display);
+}
