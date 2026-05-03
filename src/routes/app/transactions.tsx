@@ -115,7 +115,7 @@ function TxTab() {
                 <Icon className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold capitalize">{tx.type.replace("_", " ")}</div>
+                <div className="text-sm font-semibold">{labelFor(tx)}</div>
                 <div className="truncate text-xs text-muted-foreground">{tx.description ?? new Date(tx.created_at).toLocaleString()}</div>
               </div>
               <div className="text-right">
