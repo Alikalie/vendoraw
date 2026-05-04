@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 import { formatMoney } from "@/data/countries";
-import { Plus, Pencil, Trash2, Power, X, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Power, X, Loader2, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/products")({
@@ -22,11 +22,15 @@ type Product = {
   id: string; name: string; description: string | null; price: number;
   daily_earning: number; duration_days: number; total_return: number;
   risk_level: string; active: boolean; created_at: string;
+  image_url: string | null; earning_frequency: string;
 };
 
 const blankForm = {
   name: "", description: "", price: "", daily_earning: "",
-  duration_days: "", total_return: "", risk_level: "low" as "low" | "medium" | "high",
+  duration_days: "", total_return: "",
+  risk_level: "low" as "low" | "medium",
+  earning_frequency: "daily" as "daily" | "weekly" | "monthly",
+  image_url: "" as string,
 };
 
 function AdminProducts() {
@@ -36,6 +40,8 @@ function AdminProducts() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<typeof blankForm>(blankForm);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setLoading(true);
@@ -54,8 +60,28 @@ function AdminProducts() {
       name: p.name, description: p.description ?? "",
       price: String(p.price), daily_earning: String(p.daily_earning),
       duration_days: String(p.duration_days), total_return: String(p.total_return),
-      risk_level: (p.risk_level as "low" | "medium" | "high") ?? "low",
+      risk_level: (p.risk_level === "medium" ? "medium" : "low"),
+      earning_frequency: ((p.earning_frequency as "daily" | "weekly" | "monthly") ?? "daily"),
+      image_url: p.image_url ?? "",
     });
+  };
+
+  const onPickImage = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("product-images")
+        .upload(path, file, { cacheControl: "3600", upsert: false });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success("Image uploaded");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const save = async () => {
@@ -67,6 +93,8 @@ function AdminProducts() {
       duration_days: Number(form.duration_days),
       total_return: Number(form.total_return),
       risk_level: form.risk_level,
+      earning_frequency: form.earning_frequency,
+      image_url: form.image_url || null,
     };
     if (!payload.name) return toast.error("Name required");
     if (!isFinite(payload.price) || payload.price <= 0) return toast.error("Price must be > 0");
@@ -126,12 +154,13 @@ function AdminProducts() {
             <header className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
+                  {p.image_url && <img src={p.image_url} alt="" className="h-8 w-8 rounded object-cover" />}
                   <h3 className="text-sm font-semibold truncate">{p.name}</h3>
                   <span className={`rounded-full border px-1.5 py-0.5 text-[9px] font-semibold uppercase ${
-                    p.risk_level === "high" ? "border-destructive/30 bg-destructive/10 text-destructive"
-                      : p.risk_level === "medium" ? "border-warning/30 bg-warning/10 text-warning"
+                    p.risk_level === "medium" ? "border-warning/30 bg-warning/10 text-warning"
                       : "border-success/30 bg-success/10 text-success"
                   }`}>{p.risk_level}</span>
+                  <span className="rounded-full border border-border bg-muted px-1.5 py-0.5 text-[9px] uppercase text-muted-foreground">{p.earning_frequency}</span>
                   {!p.active && <span className="rounded-full border border-border bg-muted px-1.5 py-0.5 text-[9px] uppercase text-muted-foreground">Retired</span>}
                 </div>
                 {p.description && <p className="mt-0.5 text-[11px] text-muted-foreground">{p.description}</p>}
@@ -142,7 +171,7 @@ function AdminProducts() {
               </div>
             </header>
             <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] text-muted-foreground">
-              <Stat label="Daily" value={`+${formatMoney(Number(p.daily_earning), "USD")}`} />
+              <Stat label={p.earning_frequency} value={`+${formatMoney(Number(p.daily_earning), "USD")}`} />
               <Stat label="Duration" value={`${p.duration_days}d`} />
               <Stat label="Total ROI" value={formatMoney(Number(p.total_return), "USD")} />
             </div>
@@ -195,13 +224,44 @@ function AdminProducts() {
                     className="w-full rounded-lg border border-border bg-background/30 px-3 py-2 text-sm outline-none focus:border-primary" />
                 </Field>
               </div>
-              <Field label="Risk level">
-                <select value={form.risk_level} onChange={(e) => setForm({ ...form, risk_level: e.target.value as typeof form.risk_level })}
-                  className="w-full rounded-lg border border-border bg-background/30 px-3 py-2 text-sm outline-none focus:border-primary">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+              <div className="grid grid-cols-2 gap-2">
+                <Field label="Risk level">
+                  <select value={form.risk_level} onChange={(e) => setForm({ ...form, risk_level: e.target.value as typeof form.risk_level })}
+                    className="w-full rounded-lg border border-border bg-background/30 px-3 py-2 text-sm outline-none focus:border-primary">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                  </select>
+                </Field>
+                <Field label="Earn frequency">
+                  <select value={form.earning_frequency} onChange={(e) => setForm({ ...form, earning_frequency: e.target.value as typeof form.earning_frequency })}
+                    className="w-full rounded-lg border border-border bg-background/30 px-3 py-2 text-sm outline-none focus:border-primary">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </Field>
+              </div>
+              <Field label="Product image">
+                <div className="flex items-center gap-2">
+                  {form.image_url ? (
+                    <img src={form.image_url} alt="" className="h-12 w-12 rounded object-cover border border-border" />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded border border-dashed border-border text-muted-foreground">
+                      <ImageIcon className="h-4 w-4" />
+                    </div>
+                  )}
+                  <input ref={fileRef} type="file" accept="image/*" hidden
+                    onChange={(e) => e.target.files?.[0] && onPickImage(e.target.files[0])} />
+                  <button type="button" onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-xs font-semibold hover:bg-background/40 disabled:opacity-50">
+                    <Upload className="h-3.5 w-3.5" /> {uploading ? "Uploading…" : form.image_url ? "Replace" : "Upload"}
+                  </button>
+                  {form.image_url && (
+                    <button type="button" onClick={() => setForm({ ...form, image_url: "" })}
+                      className="text-xs text-destructive hover:underline">Remove</button>
+                  )}
+                </div>
               </Field>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-2">
