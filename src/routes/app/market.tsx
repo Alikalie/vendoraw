@@ -9,6 +9,7 @@ import { Clock, TrendingUp, ShieldCheck, X, CheckCircle2 } from "lucide-react";
 type Product = {
   id: string; name: string; description: string | null; price: number;
   daily_earning: number; duration_days: number; total_return: number; risk_level: string;
+  image_url: string | null; earning_frequency: string;
 };
 
 type MyInv = {
@@ -246,7 +247,6 @@ function RiskBadge({ level }: { level: string }) {
   const map: Record<string, string> = {
     low: "bg-success/15 text-success border-success/30",
     medium: "bg-warning/15 text-warning border-warning/30",
-    high: "bg-destructive/15 text-destructive border-destructive/30",
   };
   return <span className={`rounded-full border px-2 py-0.5 text-[10px] capitalize ${map[level] ?? map.low}`}>{level} risk</span>;
 }
