@@ -142,13 +142,16 @@ function MarketTab() {
                 style={{ background: "var(--gradient-card)" }}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
+                  <div className="flex items-start gap-3">
+                    {p.image_url && <img src={p.image_url} alt="" className="h-14 w-14 rounded-xl object-cover border border-border" />}
+                    <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-base font-semibold">{p.name}</h3>
                       <RiskBadge level={p.risk_level} />
                       {owned && <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">Owned</span>}
                     </div>
                     {p.description && <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{p.description}</p>}
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold">{formatMoney(localPrice, cur)}</div>
@@ -156,7 +159,7 @@ function MarketTab() {
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <Mini icon={TrendingUp} label="Daily" value={`+${formatMoney(localDaily, cur)}`} />
+                  <Mini icon={TrendingUp} label={p.earning_frequency ?? "daily"} value={`+${formatMoney(localDaily, cur)}`} />
                   <Mini icon={Clock} label="Cycle" value={`${p.duration_days}d`} />
                   <Mini icon={ShieldCheck} label="ROI" value={formatMoney(localReturn, cur)} />
                 </div>
