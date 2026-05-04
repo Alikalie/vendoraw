@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
-import { ArrowDownToLine, ArrowUpFromLine, Bell, TrendingUp, Wallet, Activity, ShieldAlert } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Bell, TrendingUp, Wallet, Activity } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
   component: HomeTab,
@@ -60,12 +60,6 @@ function HomeTab() {
         <Stat icon={TrendingUp} label="Earned" value={formatMoney(profile.total_earned, cur)} />
         <Stat icon={Activity} label="Active" value={String(activeCount)} />
         <Stat icon={ArrowUpFromLine} label="Withdrawn" value={formatMoney(profile.total_withdrawn, cur)} />
-      </div>
-
-      {/* Disclaimer */}
-      <div className="flex gap-2 rounded-2xl border border-warning/30 bg-warning/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
-        <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
-        <span>Educational simulation. Earnings shown are simulated and not guaranteed.</span>
       </div>
 
       {/* Trending */}
