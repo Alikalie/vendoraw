@@ -149,7 +149,9 @@ export type Database = {
           daily_earning: number
           description: string | null
           duration_days: number
+          earning_frequency: string
           id: string
+          image_url: string | null
           name: string
           price: number
           risk_level: string
@@ -161,7 +163,9 @@ export type Database = {
           daily_earning: number
           description?: string | null
           duration_days: number
+          earning_frequency?: string
           id?: string
+          image_url?: string | null
           name: string
           price: number
           risk_level?: string
@@ -173,7 +177,9 @@ export type Database = {
           daily_earning?: number
           description?: string | null
           duration_days?: number
+          earning_frequency?: string
           id?: string
+          image_url?: string | null
           name?: string
           price?: number
           risk_level?: string
