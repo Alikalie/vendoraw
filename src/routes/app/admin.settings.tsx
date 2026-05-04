@@ -41,7 +41,7 @@ function Page() {
     let value: unknown = draft[key];
     if (NUMERIC_KEYS.includes(key)) value = Number(draft[key]);
     else if (BOOL_KEYS.includes(key)) value = draft[key] === "true";
-    const { error } = await supabase.from("app_settings").upsert({ key, value, updated_at: new Date().toISOString() });
+    const { error } = await supabase.from("app_settings").upsert([{ key, value: value as never, updated_at: new Date().toISOString() }]);
     setSaving(null);
     if (error) return toast.error(error.message);
     toast.success(`${key} saved`);
