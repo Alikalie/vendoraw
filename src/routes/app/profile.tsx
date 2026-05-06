@@ -191,12 +191,18 @@ function ProfileTab() {
       {/* Referral */}
       <div className="rounded-2xl border border-border p-4 bg-card">
         <div className="text-xs text-muted-foreground">Your referral code</div>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
-          <button onClick={() => copy(profile.referral_code, "Referral code")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background/40">
-            <Copy className="h-3 w-3" /> Copy
-          </button>
-        </div>
+        {profile.referral_code ? (
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
+            <button onClick={() => copy(profile.referral_code!, "Referral code")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background/40">
+              <Copy className="h-3 w-3" /> Copy
+            </button>
+          </div>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Complete 10 investments to apply for a custom referral code.
+          </p>
+        )}
       </div>
 
       {/* Withdrawal history */}
