@@ -142,6 +142,75 @@ export type Database = {
           },
         ]
       }
+      news_posts: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          image_url: string | null
+          pinned: boolean
+          published: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          pinned?: boolean
+          published?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          image_url?: string | null
+          pinned?: boolean
+          published?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          read_at: string | null
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
@@ -202,7 +271,7 @@ export type Database = {
           is_blocked: boolean
           last_name: string
           profile_locked: boolean
-          referral_code: string
+          referral_code: string | null
           referred_by: string | null
           theme: string
           total_earned: number
@@ -224,7 +293,7 @@ export type Database = {
           is_blocked?: boolean
           last_name: string
           profile_locked?: boolean
-          referral_code: string
+          referral_code?: string | null
           referred_by?: string | null
           theme?: string
           total_earned?: number
@@ -246,7 +315,7 @@ export type Database = {
           is_blocked?: boolean
           last_name?: string
           profile_locked?: boolean
-          referral_code?: string
+          referral_code?: string | null
           referred_by?: string | null
           theme?: string
           total_earned?: number
@@ -263,6 +332,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referral_applications: {
+        Row: {
+          account_id: string
+          created_at: string
+          desired_code: string
+          email: string
+          full_name: string
+          id: string
+          payout_account: string
+          reject_reason: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          desired_code: string
+          email: string
+          full_name: string
+          id?: string
+          payout_account: string
+          reject_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          desired_code?: string
+          email?: string
+          full_name?: string
+          id?: string
+          payout_account?: string
+          reject_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       resale_listings: {
         Row: {
@@ -467,6 +581,7 @@ export type Database = {
       }
     }
     Functions: {
+      approve_referral_application: { Args: { _app_id: string }; Returns: Json }
       gen_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -485,6 +600,10 @@ export type Database = {
         Returns: undefined
       }
       process_daily_earnings: { Args: never; Returns: Json }
+      reject_referral_application: {
+        Args: { _app_id: string; _reason?: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "user" | "super_admin"

@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, ShieldAlert, TrendingUp, Wallet, Repeat, Users, Menu, X } from "lucide-react";
+import { ArrowRight, TrendingUp, Wallet, Repeat, Users, Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Vendora — Trade, Earn & Resell" },
-      { name: "description", content: "Vendora is an educational simulation of a trading & investment platform. Deposit, buy products, earn simulated daily returns, resell to peers, or withdraw." },
+      { name: "description", content: "Vendora is a global trading & investment marketplace. Deposit, buy products, earn daily returns, resell to peers, or withdraw." },
       { property: "og:title", content: "Vendora — Trade, Earn & Resell" },
-      { property: "og:description", content: "Educational simulation of a global trading & investment marketplace." },
+      { property: "og:description", content: "Global trading & investment marketplace." },
     ],
   }),
   component: Index,
@@ -18,7 +18,6 @@ function Index() {
   const [navOpen, setNavOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Top nav */}
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <Link to="/" className="flex items-center gap-2">
@@ -26,74 +25,53 @@ function Index() {
             <span className="text-lg font-bold tracking-tight">Vendora</span>
           </Link>
           <nav className="hidden items-center gap-2 sm:flex">
-            <Link to="/login" className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-              Log in
-            </Link>
-            <Link to="/register" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              Get started
-            </Link>
+            <Link to="/login" className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground">Log in</Link>
+            <Link to="/register" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Get started</Link>
           </nav>
-          <button
-            type="button"
-            aria-label={navOpen ? "Close menu" : "Open menu"}
+          <button type="button" aria-label={navOpen ? "Close menu" : "Open menu"}
             onClick={() => setNavOpen((v) => !v)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground sm:hidden"
-          >
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground sm:hidden">
             {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
         {navOpen && (
           <div className="border-t border-border bg-background/95 px-5 py-3 sm:hidden">
             <Link to="/login" onClick={() => setNavOpen(false)}
-              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card hover:text-foreground">
-              Log in
-            </Link>
+              className="block rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card hover:text-foreground">Log in</Link>
             <Link to="/register" onClick={() => setNavOpen(false)}
-              className="mt-1 block rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
-              Get started
-            </Link>
+              className="mt-1 block rounded-lg bg-primary px-3 py-2.5 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">Get started</Link>
           </div>
         )}
       </header>
 
-      {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 opacity-30" style={{ background: "radial-gradient(60% 60% at 50% 0%, var(--primary) 0%, transparent 60%)" }} />
         <div className="mx-auto max-w-6xl px-5 pt-16 pb-24 text-center md:pt-24">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs text-muted-foreground">
-            <ShieldAlert className="h-3.5 w-3.5 text-warning" />
-            Educational simulation — not real investments
-          </div>
           <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight md:text-6xl">
             Trade, earn & resell —{" "}
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-primary)" }}>
-              all in one wallet
-            </span>
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-primary)" }}>all in one wallet</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
-            Vendora is a global marketplace simulation where you deposit, purchase products as positions,
-            accrue simulated daily returns, and resell early to peers for liquidity.
+            Vendora is a global marketplace where you deposit, purchase products as positions,
+            earn daily returns, and resell early to peers for liquidity.
           </p>
-          <div className="mt-8 flex items-center justify-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/register" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] hover:opacity-90">
               Create your wallet <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/login" className="rounded-full border border-border px-6 py-3 text-sm font-semibold hover:bg-card">
-              I have an account
-            </Link>
+            <Link to="/login" className="rounded-full border border-border px-6 py-3 text-sm font-semibold hover:bg-card">I have an account</Link>
           </div>
         </div>
       </section>
 
-      {/* How */}
       <section className="mx-auto max-w-6xl px-5 pb-20">
         <h2 className="mb-8 text-center text-2xl font-bold md:text-3xl">How it works</h2>
         <div className="grid gap-4 md:grid-cols-4">
           {[
             { icon: Wallet, title: "Deposit", text: "Fund your Vendora wallet in your local currency." },
             { icon: TrendingUp, title: "Buy a product", text: "Pick from curated bundles with clear ROI & duration." },
-            { icon: Repeat, title: "Earn or resell", text: "Accrue simulated daily returns or resell early." },
-            { icon: Users, title: "Refer & earn", text: "Share your code — earn $5 + commissions." },
+            { icon: Repeat, title: "Earn or resell", text: "Accrue daily returns or resell early." },
+            { icon: Users, title: "Refer & earn", text: "Apply for a code after 10 completed investments." },
           ].map((s) => {
             const Icon = s.icon;
             return (
@@ -109,25 +87,8 @@ function Index() {
         </div>
       </section>
 
-      {/* Trust / disclaimers */}
-      <section className="mx-auto max-w-6xl px-5 pb-20">
-        <div className="rounded-3xl border border-warning/40 bg-warning/5 p-8 text-sm leading-relaxed">
-          <h3 className="mb-2 flex items-center gap-2 text-base font-semibold text-warning">
-            <ShieldAlert className="h-4 w-4" /> Important risk disclaimer
-          </h3>
-          <p className="text-muted-foreground">
-            Vendora is provided as an <strong className="text-foreground">educational simulation</strong>.
-            "Daily earnings", "circle payouts", and ROI shown in-app are simulated values used to
-            demonstrate marketplace mechanics — they are <strong className="text-foreground">not</strong>{" "}
-            guarantees of real-world returns. Fixed-return investment models can resemble high-yield
-            investment programs (HYIPs) and are illegal in many jurisdictions without proper licensing.
-            Do not deposit real funds expecting yield. Always seek licensed financial advice.
-          </p>
-        </div>
-      </section>
-
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Vendora — Educational simulation
+        © {new Date().getFullYear()} Vendora
       </footer>
     </div>
   );

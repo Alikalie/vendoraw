@@ -164,7 +164,8 @@ export function formatMoney(amount: number, currency: string): string {
  */
 export function displayCurrency(profileCurrency: string): string {
   if (profileCurrency === "SLE") return "SLE";
-  return profileCurrency;
+  // Everyone else sees USD (live FX-converted via convertFromUsd).
+  return "USD";
 }
 
 /**
@@ -173,4 +174,13 @@ export function displayCurrency(profileCurrency: string): string {
 export function formatUsd(amountUsd: number, profileCurrency: string): string {
   const display = displayCurrency(profileCurrency);
   return formatMoney(convertFromUsd(amountUsd, display), display);
+}
+
+/**
+ * Filter the country list shown to users registering or browsing — Sierra Leone
+ * stays for SL users (still selectable) but for currency dropdowns elsewhere we
+ * may want to hide SLE. Always returns the full list for sign-up.
+ */
+export function listCountries(): Country[] {
+  return countries;
 }

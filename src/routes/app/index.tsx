@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
-import { ArrowDownToLine, ArrowUpFromLine, Bell, TrendingUp, Wallet, Activity, ShieldAlert } from "lucide-react";
+import { ArrowDownToLine, ArrowUpFromLine, Bell, TrendingUp, Wallet, Activity, Newspaper, X } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
   component: HomeTab,
@@ -13,6 +13,9 @@ function HomeTab() {
   const { profile } = useAuth();
   const [activeCount, setActiveCount] = useState(0);
   const [trending, setTrending] = useState<{ id: string; name: string; daily_earning: number; total_return: number; price: number }[]>([]);
+  const [news, setNews] = useState<{ id: string; title: string; body: string; image_url: string | null; created_at: string }[]>([]);
+  const [notifs, setNotifs] = useState<{ id: string; title: string; body: string; kind: string; read_at: string | null; created_at: string }[]>([]);
+  const [showNotifs, setShowNotifs] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -20,7 +23,30 @@ function HomeTab() {
       .then(({ count }) => setActiveCount(count ?? 0));
     supabase.from("products").select("id,name,daily_earning,total_return,price").eq("active", true).limit(3)
       .then(({ data }) => setTrending(data ?? []));
+    supabase.from("news_posts" as never).select("id,title,body,image_url,created_at")
+      .eq("published", true).order("pinned", { ascending: false }).order("created_at", { ascending: false }).limit(5)
+      .then(({ data }) => setNews((data as typeof news) ?? []));
+    const loadNotifs = () => {
+      supabase.from("notifications" as never)
+        .select("id,title,body,kind,read_at,created_at")
+        .or(`user_id.eq.${profile.id},user_id.is.null`)
+        .order("created_at", { ascending: false }).limit(20)
+        .then(({ data }) => setNotifs((data as typeof notifs) ?? []));
+    };
+    loadNotifs();
+    const ch = supabase.channel(`notifs-${profile.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, loadNotifs)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [profile]);
+
+  const unreadCount = notifs.filter((n) => !n.read_at).length;
+  const markAllRead = async () => {
+    if (!profile) return;
+    await supabase.from("notifications" as never).update({ read_at: new Date().toISOString() } as never)
+      .eq("user_id", profile.id).is("read_at", null);
+    setNotifs((p) => p.map((n) => ({ ...n, read_at: n.read_at ?? new Date().toISOString() })));
+  };
 
   if (!profile) return null;
   const cur = profile.currency;
@@ -33,8 +59,14 @@ function HomeTab() {
           <p className="text-xs text-muted-foreground">Welcome back</p>
           <h1 className="text-xl font-bold">{profile.first_name} 👋</h1>
         </div>
-        <button className="rounded-full border border-border p-2 text-muted-foreground hover:text-foreground">
+        <button onClick={() => setShowNotifs(true)}
+          className="relative rounded-full border border-border p-2 text-muted-foreground hover:text-foreground">
           <Bell className="h-4 w-4" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground">
+              {unreadCount}
+            </span>
+          )}
         </button>
       </div>
 
@@ -62,12 +94,6 @@ function HomeTab() {
         <Stat icon={ArrowUpFromLine} label="Withdrawn" value={formatMoney(profile.total_withdrawn, cur)} />
       </div>
 
-      {/* Disclaimer */}
-      <div className="flex gap-2 rounded-2xl border border-warning/30 bg-warning/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
-        <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
-        <span>Educational simulation. Earnings shown are simulated and not guaranteed.</span>
-      </div>
-
       {/* Trending */}
       <div>
         <div className="mb-3 flex items-center justify-between">
@@ -92,14 +118,56 @@ function HomeTab() {
 
       {/* News */}
       <div>
-        <h2 className="mb-3 text-sm font-semibold">News & updates</h2>
-        <div className="rounded-2xl border border-border p-4" style={{ background: "var(--gradient-card)" }}>
-          <div className="text-sm font-semibold">Welcome to Vendora 🎉</div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Explore the market, list a resale, or share your referral code from your profile to earn commissions when friends join.
-          </p>
+        <div className="mb-3 flex items-center gap-2">
+          <Newspaper className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-semibold">News & updates</h2>
+        </div>
+        <div className="space-y-2">
+          {news.length === 0 && (
+            <div className="rounded-2xl border border-border p-4" style={{ background: "var(--gradient-card)" }}>
+              <div className="text-sm font-semibold">Welcome to Vendora 🎉</div>
+              <p className="mt-1 text-xs text-muted-foreground">Explore the market and start earning daily.</p>
+            </div>
+          )}
+          {news.map((n) => (
+            <article key={n.id} className="rounded-2xl border border-border overflow-hidden" style={{ background: "var(--gradient-card)" }}>
+              {n.image_url && <img src={n.image_url} alt={n.title} className="h-32 w-full object-cover" />}
+              <div className="p-4">
+                <div className="text-sm font-semibold">{n.title}</div>
+                <p className="mt-1 text-xs text-muted-foreground whitespace-pre-wrap">{n.body}</p>
+                <div className="mt-2 text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleDateString()}</div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
+
+      {showNotifs && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center" onClick={() => setShowNotifs(false)}>
+          <div className="w-full max-w-md max-h-[80vh] overflow-y-auto rounded-t-3xl border border-border bg-card p-5 sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold">Notifications</h3>
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && <button onClick={markAllRead} className="text-[11px] text-primary hover:underline">Mark all read</button>}
+                <button onClick={() => setShowNotifs(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              {notifs.length === 0 && <p className="text-center text-xs text-muted-foreground py-8">No notifications yet</p>}
+              {notifs.map((n) => (
+                <div key={n.id} className={`rounded-xl border p-3 ${n.read_at ? "border-border bg-background/30" : "border-primary/40 bg-primary/5"}`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="text-sm font-semibold">{n.title}</div>
+                    {!n.read_at && <span className="h-2 w-2 rounded-full bg-primary mt-1.5" />}
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground whitespace-pre-wrap">{n.body}</p>
+                  <div className="mt-1 text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleString()}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

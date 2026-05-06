@@ -15,7 +15,7 @@ export type Profile = {
   balance: number;
   total_earned: number;
   total_withdrawn: number;
-  referral_code: string;
+  referral_code: string | null;
   referred_by: string | null;
   is_blocked: boolean;
   profile_locked: boolean;

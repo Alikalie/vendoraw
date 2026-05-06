@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import {
-  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut, ShieldAlert,
+  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut,
   LifeBuoy, FileText, Wallet, Lock, Sun, Moon, ShieldCheck,
 } from "lucide-react";
 import { WithdrawalMethodsManager } from "@/components/app/WithdrawalMethods";
@@ -191,12 +191,18 @@ function ProfileTab() {
       {/* Referral */}
       <div className="rounded-2xl border border-border p-4 bg-card">
         <div className="text-xs text-muted-foreground">Your referral code</div>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
-          <button onClick={() => copy(profile.referral_code, "Referral code")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background/40">
-            <Copy className="h-3 w-3" /> Copy
-          </button>
-        </div>
+        {profile.referral_code ? (
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
+            <button onClick={() => copy(profile.referral_code!, "Referral code")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background/40">
+              <Copy className="h-3 w-3" /> Copy
+            </button>
+          </div>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Complete 10 investments to apply for a custom referral code.
+          </p>
+        )}
       </div>
 
       {/* Withdrawal history */}
@@ -227,12 +233,6 @@ function ProfileTab() {
           ))}
         </div>
       </section>
-
-      {/* Disclaimer */}
-      <div className="flex gap-2 rounded-2xl border border-warning/40 bg-warning/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
-        <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
-        <span>Vendora is an educational simulation. No real money is moved. Returns shown are not guaranteed.</span>
-      </div>
 
       <button onClick={doSignOut} className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 py-3 text-sm font-semibold text-destructive hover:bg-destructive/10">
         <LogOut className="h-4 w-4" /> Sign out
