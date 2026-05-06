@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import {
-  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut, ShieldAlert,
+  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut,
   LifeBuoy, FileText, Wallet, Lock, Sun, Moon, ShieldCheck,
 } from "lucide-react";
 import { WithdrawalMethodsManager } from "@/components/app/WithdrawalMethods";
