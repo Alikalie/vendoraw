@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/data/countries";
 import { toast } from "sonner";
 import {
-  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut,
+  ArrowDownToLine, ArrowUpFromLine, Tag, Copy, LogOut, ShieldAlert,
   LifeBuoy, FileText, Wallet, Lock, Sun, Moon, ShieldCheck,
 } from "lucide-react";
 import { WithdrawalMethodsManager } from "@/components/app/WithdrawalMethods";
@@ -227,6 +227,12 @@ function ProfileTab() {
           ))}
         </div>
       </section>
+
+      {/* Disclaimer */}
+      <div className="flex gap-2 rounded-2xl border border-warning/40 bg-warning/5 p-3 text-[11px] leading-relaxed text-muted-foreground">
+        <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+        <span>Vendora is an educational simulation. No real money is moved. Returns shown are not guaranteed.</span>
+      </div>
 
       <button onClick={doSignOut} className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/40 py-3 text-sm font-semibold text-destructive hover:bg-destructive/10">
         <LogOut className="h-4 w-4" /> Sign out

@@ -108,7 +108,7 @@ function RegisterPage() {
           </button>
 
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            By signing up you agree to Vendora's terms. Investment products carry risk.
+            By signing up you acknowledge Vendora is an educational simulation. Returns shown are simulated and not guaranteed.
           </p>
         </form>
 

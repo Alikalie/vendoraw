@@ -83,7 +83,7 @@ export function WithdrawDialog({ onClose, onDone, onManageMethods }: { onClose: 
               className="w-full rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-50">
               {busy ? "Processing…" : "Request withdrawal"}
             </button>
-            <p className="text-[11px] text-muted-foreground">Withdrawals are queued as pending and processed by an admin.</p>
+            <p className="text-[11px] text-muted-foreground">Withdrawals are queued as pending in this educational simulation.</p>
           </div>
         )}
       </div>

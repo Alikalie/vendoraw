@@ -9,7 +9,6 @@ import { Clock, TrendingUp, ShieldCheck, X, CheckCircle2 } from "lucide-react";
 type Product = {
   id: string; name: string; description: string | null; price: number;
   daily_earning: number; duration_days: number; total_return: number; risk_level: string;
-  image_url: string | null; earning_frequency: string;
 };
 
 type MyInv = {
@@ -142,16 +141,13 @@ function MarketTab() {
                 style={{ background: "var(--gradient-card)" }}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    {p.image_url && <img src={p.image_url} alt="" className="h-14 w-14 rounded-xl object-cover border border-border" />}
-                    <div>
+                  <div>
                     <div className="flex items-center gap-2">
                       <h3 className="text-base font-semibold">{p.name}</h3>
                       <RiskBadge level={p.risk_level} />
                       {owned && <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">Owned</span>}
                     </div>
                     {p.description && <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{p.description}</p>}
-                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold">{formatMoney(localPrice, cur)}</div>
@@ -159,7 +155,7 @@ function MarketTab() {
                   </div>
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <Mini icon={TrendingUp} label={p.earning_frequency ?? "daily"} value={`+${formatMoney(localDaily, cur)}`} />
+                  <Mini icon={TrendingUp} label="Daily" value={`+${formatMoney(localDaily, cur)}`} />
                   <Mini icon={Clock} label="Cycle" value={`${p.duration_days}d`} />
                   <Mini icon={ShieldCheck} label="ROI" value={formatMoney(localReturn, cur)} />
                 </div>
@@ -250,6 +246,7 @@ function RiskBadge({ level }: { level: string }) {
   const map: Record<string, string> = {
     low: "bg-success/15 text-success border-success/30",
     medium: "bg-warning/15 text-warning border-warning/30",
+    high: "bg-destructive/15 text-destructive border-destructive/30",
   };
   return <span className={`rounded-full border px-2 py-0.5 text-[10px] capitalize ${map[level] ?? map.low}`}>{level} risk</span>;
 }
