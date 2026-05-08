@@ -96,7 +96,7 @@ export const moderateDeposit = createServerFn({ method: "POST" })
     // approve: credit balance + total_invested atomically (best-effort sequential)
     const { data: prof, error: pErr } = await supabase
       .from("profiles")
-      .select("balance,total_invested")
+      .select("balance,total_invested,referred_by,currency")
       .eq("id", tx.user_id)
       .maybeSingle();
     if (pErr || !prof) throw new Error("User profile not found");
@@ -118,5 +118,44 @@ export const moderateDeposit = createServerFn({ method: "POST" })
       .eq("id", tx.user_id);
     if (uPErr) throw new Error(uPErr.message);
 
-    return { ok: true, credited: Number(tx.amount) };
+    // Affiliate commission: credit the referrer (if any) a % of this deposit
+    let commission = 0;
+    if (prof.referred_by) {
+      const { data: setting } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "affiliate_commission_rate")
+        .maybeSingle();
+      const rate = Number((setting?.value as unknown) ?? 0.05);
+      commission = Number(tx.amount) * rate;
+      if (commission > 0) {
+        const { data: aff } = await supabase
+          .from("profiles")
+          .select("balance,total_earned,currency")
+          .eq("id", prof.referred_by)
+          .maybeSingle();
+        if (aff) {
+          await supabase.from("profiles").update({
+            balance: Number(aff.balance) + commission,
+            total_earned: Number(aff.total_earned) + commission,
+          }).eq("id", prof.referred_by);
+          await supabase.from("transactions").insert({
+            user_id: prof.referred_by,
+            type: "referral",
+            amount: commission,
+            currency: aff.currency,
+            status: "completed",
+            description: `Affiliate commission (${(rate * 100).toFixed(1)}% of deposit)`,
+          });
+          await supabase.from("notifications").insert({
+            user_id: prof.referred_by,
+            title: "Affiliate commission earned 💰",
+            body: `You earned ${commission.toFixed(2)} ${aff.currency} from a referred user's deposit.`,
+            kind: "success",
+          });
+        }
+      }
+    }
+
+    return { ok: true, credited: Number(tx.amount), commission };
   });
