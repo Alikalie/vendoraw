@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { countries } from "@/data/countries";
 import { toast } from "sonner";
@@ -25,6 +25,13 @@ function RegisterPage() {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code") ?? params.get("ref");
+    if (code) setReferral(code.toUpperCase());
+  }, []);
 
   const country = useMemo(() => countries.find((c) => c.name === countryName)!, [countryName]);
 
