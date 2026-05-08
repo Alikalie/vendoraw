@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { countries } from "@/data/countries";
 import { toast } from "sonner";
@@ -25,6 +25,13 @@ function RegisterPage() {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code") ?? params.get("ref");
+    if (code) setReferral(code.toUpperCase());
+  }, []);
 
   const country = useMemo(() => countries.find((c) => c.name === countryName)!, [countryName]);
 
@@ -94,8 +101,16 @@ function RegisterPage() {
             Investment currency: <span className="font-semibold text-foreground">{country.currency}</span>
           </div>
 
-          <Field label="Referral code (optional)">
-            <input value={referral} onChange={(e) => setReferral(e.target.value)} placeholder="VENXXXXXX" className={inputCls} />
+          <Field label="Promo code (optional)">
+            <input
+              value={referral}
+              onChange={(e) => setReferral(e.target.value)}
+              placeholder="Affiliate promo code"
+              className={inputCls}
+            />
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              Got a promo code from a Vendora affiliate? Enter it here.
+            </p>
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
@@ -108,7 +123,7 @@ function RegisterPage() {
           </button>
 
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            By signing up you acknowledge Vendora is an educational simulation. Returns shown are simulated and not guaranteed.
+            By creating an account you agree to Vendora's terms and privacy policy.
           </p>
         </form>
 

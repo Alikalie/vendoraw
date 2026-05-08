@@ -188,22 +188,25 @@ function ProfileTab() {
         </Link>
       </div>
 
-      {/* Referral */}
-      <div className="rounded-2xl border border-border p-4 bg-card">
-        <div className="text-xs text-muted-foreground">Your referral code</div>
-        {profile.referral_code ? (
-          <div className="mt-1 flex items-center justify-between gap-2">
-            <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
-            <button onClick={() => copy(profile.referral_code!, "Referral code")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background/40">
-              <Copy className="h-3 w-3" /> Copy
-            </button>
+      {/* Affiliate program */}
+      <Link to="/app/affiliate" className="block rounded-2xl border border-border p-4 bg-card hover:bg-background/40 transition-colors">
+        <div className="flex items-center justify-between">
+          <div className="min-w-0">
+            <div className="text-xs text-muted-foreground">Affiliate program</div>
+            {profile.referral_code ? (
+              <div className="mt-1 flex items-center gap-2">
+                <code className="text-lg font-bold tracking-wider text-primary">{profile.referral_code}</code>
+                <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success">Approved</span>
+              </div>
+            ) : (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Complete 10 investments to apply for a promo code and earn commissions.
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="mt-1 text-xs text-muted-foreground">
-            Complete 10 investments to apply for a custom referral code.
-          </p>
-        )}
-      </div>
+          <span className="text-[11px] text-primary">Open →</span>
+        </div>
+      </Link>
 
       {/* Withdrawal history */}
       <section>

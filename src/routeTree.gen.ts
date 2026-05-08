@@ -22,6 +22,7 @@ import { Route as AppProfileRouteImport } from './routes/app/profile'
 import { Route as AppPrivacyRouteImport } from './routes/app/privacy'
 import { Route as AppMarketRouteImport } from './routes/app/market'
 import { Route as AppDepositRouteImport } from './routes/app/deposit'
+import { Route as AppAffiliateRouteImport } from './routes/app/affiliate'
 import { Route as AppAdminIndexRouteImport } from './routes/app/admin.index'
 import { Route as AppTransactionsTxIdRouteImport } from './routes/app/transactions.$txId'
 import { Route as AppAdminWithdrawalsRouteImport } from './routes/app/admin.withdrawals'
@@ -101,6 +102,11 @@ const AppDepositRoute = AppDepositRouteImport.update({
   path: '/deposit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAffiliateRoute = AppAffiliateRouteImport.update({
+  id: '/affiliate',
+  path: '/affiliate',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/affiliate': typeof AppAffiliateRoute
   '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
   '/app/privacy': typeof AppPrivacyRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/affiliate': typeof AppAffiliateRoute
   '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
   '/app/privacy': typeof AppPrivacyRoute
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/app/affiliate': typeof AppAffiliateRoute
   '/app/deposit': typeof AppDepositRoute
   '/app/market': typeof AppMarketRoute
   '/app/privacy': typeof AppPrivacyRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/register'
+    | '/app/affiliate'
     | '/app/deposit'
     | '/app/market'
     | '/app/privacy'
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/register'
+    | '/app/affiliate'
     | '/app/deposit'
     | '/app/market'
     | '/app/privacy'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/register'
+    | '/app/affiliate'
     | '/app/deposit'
     | '/app/market'
     | '/app/privacy'
@@ -438,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDepositRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/affiliate': {
+      id: '/app/affiliate'
+      path: '/affiliate'
+      fullPath: '/app/affiliate'
+      preLoaderRoute: typeof AppAffiliateRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/': {
       id: '/app/admin/'
       path: '/admin'
@@ -545,6 +564,7 @@ const AppTransactionsRouteWithChildren = AppTransactionsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAffiliateRoute: typeof AppAffiliateRoute
   AppDepositRoute: typeof AppDepositRoute
   AppMarketRoute: typeof AppMarketRoute
   AppPrivacyRoute: typeof AppPrivacyRoute
@@ -568,6 +588,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAffiliateRoute: AppAffiliateRoute,
   AppDepositRoute: AppDepositRoute,
   AppMarketRoute: AppMarketRoute,
   AppPrivacyRoute: AppPrivacyRoute,
@@ -602,12 +623,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
