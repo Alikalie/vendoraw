@@ -107,7 +107,7 @@ function AdminHome() {
     { to: "/app/admin/withdrawals", title: "Withdrawals", desc: "Bulk approve payouts", icon: ArrowUpFromLine, badge: stats.pendingWithdrawals },
     { to: "/app/admin/investments", title: "Investments", desc: "Monitor active positions", icon: Activity },
     { to: "/app/admin/transactions", title: "All transactions", desc: "Full audit of money flows", icon: History },
-    { to: "/app/admin/referrals", title: "Referrals", desc: "Tree, commissions & bonuses", icon: TrendingUp },
+    { to: "/app/admin/referrals", title: "Affiliates", desc: "Applications, commissions & affiliates", icon: TrendingUp },
     { to: "/app/admin/content", title: "Site content (CMS)", desc: "Help, Privacy & instructions", icon: FileText },
     { to: "/app/admin/settings", title: "Settings", desc: "Bonuses, commissions, FX, fees", icon: Settings },
     { to: "/app/admin/audit", title: "Audit log", desc: "Every admin action recorded", icon: History },
