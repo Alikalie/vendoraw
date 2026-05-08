@@ -94,8 +94,16 @@ function RegisterPage() {
             Investment currency: <span className="font-semibold text-foreground">{country.currency}</span>
           </div>
 
-          <Field label="Referral code (optional)">
-            <input value={referral} onChange={(e) => setReferral(e.target.value)} placeholder="VENXXXXXX" className={inputCls} />
+          <Field label="Promo code (optional)">
+            <input
+              value={referral}
+              onChange={(e) => setReferral(e.target.value)}
+              placeholder="Affiliate promo code"
+              className={inputCls}
+            />
+            <p className="mt-1 text-[10px] text-muted-foreground">
+              Got a promo code from a Vendora affiliate? Enter it here.
+            </p>
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
@@ -108,7 +116,7 @@ function RegisterPage() {
           </button>
 
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            By signing up you acknowledge Vendora is an educational simulation. Returns shown are simulated and not guaranteed.
+            By creating an account you agree to Vendora's terms and privacy policy.
           </p>
         </form>
 
