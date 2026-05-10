@@ -9,18 +9,16 @@ export async function loadRates(): Promise<Record<string, number>> {
   if (cache) return cache;
   if (inflight) return inflight;
   inflight = (async () => {
-    const { data } = await supabase
-      .from("exchange_rates" as never)
-      .select("currency,rate");
+    const { data } = await supabase.from("exchange_rates" as never).select("currency,rate");
     const map: Record<string, number> = { ...usdRates };
     ((data as { currency: string; rate: number }[] | null) ?? []).forEach((r) => {
       map[r.currency] = Number(r.rate);
     });
-      cache = map;
-      // Expose to legacy convertFromUsd consumers.
-      (globalThis as unknown as { __fxCache?: Record<string, number> }).__fxCache = map;
-      inflight = null;
-      return map;
+    cache = map;
+    // Expose to legacy convertFromUsd consumers.
+    (globalThis as unknown as { __fxCache?: Record<string, number> }).__fxCache = map;
+    inflight = null;
+    return map;
   })();
   return inflight;
 }
@@ -45,4 +43,6 @@ export function convertCurrency(amount: number, from: string, to: string): numbe
   return convertUsd(usd, to);
 }
 
-export function clearFxCache() { cache = null; }
+export function clearFxCache() {
+  cache = null;
+}

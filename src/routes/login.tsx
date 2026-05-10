@@ -46,19 +46,26 @@ function LoginPage() {
           <div>
             <label className="text-xs font-medium text-muted-foreground">Email</label>
             <input
-              type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full rounded-xl border border-border bg-input px-4 py-3 text-sm outline-none focus:border-primary"
             />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">Password</label>
             <input
-              type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-xl border border-border bg-input px-4 py-3 text-sm outline-none focus:border-primary"
             />
           </div>
           <button
-            type="submit" disabled={loading}
+            type="submit"
+            disabled={loading}
             className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Logging in…" : "Log in"}

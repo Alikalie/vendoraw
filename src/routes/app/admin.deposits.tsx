@@ -54,21 +54,28 @@ function AdminDeposits() {
 
     const userIds = Array.from(new Set(list.map((r) => r.user_id)));
     if (userIds.length) {
-      const { data: ps } = await supabase.from("profiles")
-        .select("id,first_name,last_name,email").in("id", userIds);
+      const { data: ps } = await supabase
+        .from("profiles")
+        .select("id,first_name,last_name,email")
+        .in("id", userIds);
       const map: ProfileMap = {};
-      (ps ?? []).forEach((p) => { map[p.id] = { first_name: p.first_name, last_name: p.last_name, email: p.email }; });
+      (ps ?? []).forEach((p) => {
+        map[p.id] = { first_name: p.first_name, last_name: p.last_name, email: p.email };
+      });
       setProfiles(map);
     }
 
     // Sign all proof URLs
     const urlMap: Record<string, string> = {};
-    await Promise.all(list.map(async (r) => {
-      if (!r.proof_path) return;
-      const { data: signed } = await supabase.storage.from("payment-proofs")
-        .createSignedUrl(r.proof_path, 60 * 30);
-      if (signed?.signedUrl) urlMap[r.id] = signed.signedUrl;
-    }));
+    await Promise.all(
+      list.map(async (r) => {
+        if (!r.proof_path) return;
+        const { data: signed } = await supabase.storage
+          .from("payment-proofs")
+          .createSignedUrl(r.proof_path, 60 * 30);
+        if (signed?.signedUrl) urlMap[r.id] = signed.signedUrl;
+      }),
+    );
     setProofs(urlMap);
     setLoading(false);
   };
@@ -78,11 +85,15 @@ function AdminDeposits() {
     load();
     const ch = supabase
       .channel("admin-deposits")
-      .on("postgres_changes",
+      .on(
+        "postgres_changes",
         { event: "*", schema: "public", table: "transactions", filter: "type=eq.deposit" },
-        () => load())
+        () => load(),
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [isAdmin]);
 
   const moderate = async (id: string, action: "approve" | "reject") => {
@@ -116,7 +127,12 @@ function AdminDeposits() {
             {rows.length} pending · {formatMoney(totalAmount, rows[0]?.currency ?? "USD")}
           </p>
         </div>
-        <Link to="/app/admin/withdrawals" className="text-[11px] text-muted-foreground hover:text-foreground">Withdrawals →</Link>
+        <Link
+          to="/app/admin/withdrawals"
+          className="text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          Withdrawals →
+        </Link>
       </div>
 
       <div className="mt-5 space-y-3">
@@ -137,7 +153,10 @@ function AdminDeposits() {
           const proof = proofs[r.id];
           const isBusy = busyId === r.id;
           return (
-            <article key={r.id} className="rounded-2xl border border-border bg-card overflow-hidden">
+            <article
+              key={r.id}
+              className="rounded-2xl border border-border bg-card overflow-hidden"
+            >
               <header className="flex items-center justify-between gap-3 border-b border-border bg-background/40 px-4 py-3">
                 <div className="min-w-0">
                   <div className="text-sm font-semibold truncate">
@@ -148,7 +167,9 @@ function AdminDeposits() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-base font-bold text-success">+{formatMoney(Number(r.amount), r.currency)}</div>
+                  <div className="text-base font-bold text-success">
+                    +{formatMoney(Number(r.amount), r.currency)}
+                  </div>
                   <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-1.5 py-0.5 text-[9px] font-medium text-warning">
                     Pending
                   </span>
@@ -158,7 +179,11 @@ function AdminDeposits() {
                 <div>
                   {proof ? (
                     <a href={proof} target="_blank" rel="noreferrer" className="block">
-                      <img src={proof} alt="proof" className="h-32 w-full rounded-lg object-cover bg-background/60" />
+                      <img
+                        src={proof}
+                        alt="proof"
+                        className="h-32 w-full rounded-lg object-cover bg-background/60"
+                      />
                     </a>
                   ) : (
                     <div className="flex h-32 w-full items-center justify-center rounded-lg border border-dashed border-border text-[10px] text-muted-foreground">
@@ -169,12 +194,18 @@ function AdminDeposits() {
                 <div className="flex flex-col justify-between gap-2">
                   <p className="text-xs text-muted-foreground">{r.description ?? "Deposit"}</p>
                   <div className="flex gap-2">
-                    <button disabled={isBusy} onClick={() => moderate(r.id, "reject")}
-                      className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border border-destructive/40 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-50">
+                    <button
+                      disabled={isBusy}
+                      onClick={() => moderate(r.id, "reject")}
+                      className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border border-destructive/40 py-2 text-xs font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                    >
                       <XCircle className="h-3.5 w-3.5" /> Reject
                     </button>
-                    <button disabled={isBusy} onClick={() => moderate(r.id, "approve")}
-                      className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                    <button
+                      disabled={isBusy}
+                      onClick={() => moderate(r.id, "approve")}
+                      className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                    >
                       <CheckCircle2 className="h-3.5 w-3.5" /> Approve & credit
                     </button>
                   </div>

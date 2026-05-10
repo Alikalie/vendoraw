@@ -51,7 +51,10 @@ export const buyResaleListing = createServerFn({ method: "POST" })
 
     // Debit buyer, credit seller
     const price = Number(listing.price);
-    await supabaseAdmin.from("profiles").update({ balance: Number(buyer.balance) - price }).eq("id", buyer.id);
+    await supabaseAdmin
+      .from("profiles")
+      .update({ balance: Number(buyer.balance) - price })
+      .eq("id", buyer.id);
     await supabaseAdmin
       .from("profiles")
       .update({

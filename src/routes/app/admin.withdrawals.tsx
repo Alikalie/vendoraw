@@ -3,7 +3,17 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { formatMoney } from "@/data/countries";
-import { ShieldCheck, Smartphone, Building2, Wallet, CheckCircle2, XCircle, Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  ShieldCheck,
+  Smartphone,
+  Building2,
+  Wallet,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/withdrawals")({
@@ -53,7 +63,9 @@ function AdminWithdrawals() {
   const [profiles, setProfiles] = useState<ProfileMap>({});
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
-  const [confirm, setConfirm] = useState<null | { action: "approve" | "reject"; ids: string[] }>(null);
+  const [confirm, setConfirm] = useState<null | { action: "approve" | "reject"; ids: string[] }>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -75,13 +87,24 @@ function AdminWithdrawals() {
         : Promise.resolve({ data: [] as { id: string; kind: string; label: string }[] }),
       userIds.length
         ? supabase.from("profiles").select("id,first_name,last_name,email").in("id", userIds)
-        : Promise.resolve({ data: [] as { id: string; first_name: string; last_name: string; email: string | null }[] }),
+        : Promise.resolve({
+            data: [] as {
+              id: string;
+              first_name: string;
+              last_name: string;
+              email: string | null;
+            }[],
+          }),
     ]);
     const mMap: MethodMap = {};
-    (mRes.data ?? []).forEach((m) => { mMap[m.id] = { kind: m.kind, label: m.label }; });
+    (mRes.data ?? []).forEach((m) => {
+      mMap[m.id] = { kind: m.kind, label: m.label };
+    });
     setMethods(mMap);
     const pMap: ProfileMap = {};
-    (pRes.data ?? []).forEach((p) => { pMap[p.id] = { first_name: p.first_name, last_name: p.last_name, email: p.email }; });
+    (pRes.data ?? []).forEach((p) => {
+      pMap[p.id] = { first_name: p.first_name, last_name: p.last_name, email: p.email };
+    });
     setProfiles(pMap);
     setLoading(false);
   };
@@ -91,16 +114,22 @@ function AdminWithdrawals() {
     load();
     const ch = supabase
       .channel("admin-withdrawals")
-      .on("postgres_changes", { event: "*", schema: "public", table: "transactions", filter: "type=eq.withdraw" }, () => load())
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "transactions", filter: "type=eq.withdraw" },
+        () => load(),
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [isAdmin]);
 
   // Group by method kind
   const groups = useMemo(() => {
     const g: Record<string, Pending[]> = {};
     rows.forEach((r) => {
-      const kind = r.method_id ? methods[r.method_id]?.kind ?? "other" : "other";
+      const kind = r.method_id ? (methods[r.method_id]?.kind ?? "other") : "other";
       (g[kind] ??= []).push(r);
     });
     return g;
@@ -113,7 +142,8 @@ function AdminWithdrawals() {
   const toggle = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -123,7 +153,7 @@ function AdminWithdrawals() {
     setSelected((prev) => {
       const next = new Set(prev);
       const allIn = ids.every((id) => next.has(id));
-      ids.forEach((id) => allIn ? next.delete(id) : next.add(id));
+      ids.forEach((id) => (allIn ? next.delete(id) : next.add(id)));
       return next;
     });
   };
@@ -131,7 +161,8 @@ function AdminWithdrawals() {
   const toggleCollapse = (kind: string) => {
     setCollapsed((prev) => {
       const next = new Set(prev);
-      if (next.has(kind)) next.delete(kind); else next.add(kind);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
       return next;
     });
   };
@@ -156,7 +187,9 @@ function AdminWithdrawals() {
       toast.error(error.message);
       return;
     }
-    toast.success(`${confirm.action === "approve" ? "Approved" : "Rejected"} ${confirm.ids.length} withdrawal${confirm.ids.length > 1 ? "s" : ""}`);
+    toast.success(
+      `${confirm.action === "approve" ? "Approved" : "Rejected"} ${confirm.ids.length} withdrawal${confirm.ids.length > 1 ? "s" : ""}`,
+    );
     setSelected(new Set());
     setConfirm(null);
     load();
@@ -174,8 +207,15 @@ function AdminWithdrawals() {
             {rows.length} pending · {formatMoney(totalAmount, rows[0]?.currency ?? "USD")}
           </p>
         </div>
-        <Link to="/app/withdrawals" className="text-[11px] text-muted-foreground hover:text-foreground">My withdrawals →</Link>
-        <Link to="/app/admin/deposits" className="ml-2 text-[11px] text-primary hover:underline">Deposit queue →</Link>
+        <Link
+          to="/app/withdrawals"
+          className="text-[11px] text-muted-foreground hover:text-foreground"
+        >
+          My withdrawals →
+        </Link>
+        <Link to="/app/admin/deposits" className="ml-2 text-[11px] text-primary hover:underline">
+          Deposit queue →
+        </Link>
       </div>
 
       {/* Bulk action bar */}
@@ -232,10 +272,20 @@ function AdminWithdrawals() {
           const ids = list.map((r) => r.id);
           const allInGroup = ids.every((id) => selected.has(id));
           return (
-            <section key={kind} className="rounded-2xl border border-border bg-card overflow-hidden">
+            <section
+              key={kind}
+              className="rounded-2xl border border-border bg-card overflow-hidden"
+            >
               <header className="flex items-center gap-3 border-b border-border bg-background/40 px-4 py-3">
-                <button onClick={() => toggleCollapse(kind)} className="text-muted-foreground hover:text-foreground">
-                  {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                <button
+                  onClick={() => toggleCollapse(kind)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {isCollapsed ? (
+                    <ChevronRight className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </button>
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon className="h-4 w-4" />
@@ -243,7 +293,8 @@ function AdminWithdrawals() {
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold">{kindLabel[kind] ?? kind}</div>
                   <div className="text-[11px] text-muted-foreground">
-                    {list.length} request{list.length > 1 ? "s" : ""} · {formatMoney(groupTotal, list[0].currency)}
+                    {list.length} request{list.length > 1 ? "s" : ""} ·{" "}
+                    {formatMoney(groupTotal, list[0].currency)}
                   </div>
                 </div>
                 <label className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -277,14 +328,21 @@ function AdminWithdrawals() {
                     const p = profiles[r.user_id];
                     const isSel = selected.has(r.id);
                     return (
-                      <li key={r.id} className={`flex items-center gap-3 px-4 py-3 transition-colors ${isSel ? "bg-primary/5" : ""}`}>
+                      <li
+                        key={r.id}
+                        className={`flex items-center gap-3 px-4 py-3 transition-colors ${isSel ? "bg-primary/5" : ""}`}
+                      >
                         <input
                           type="checkbox"
                           checked={isSel}
                           onChange={() => toggle(r.id)}
                           className="h-4 w-4 rounded border-border accent-primary"
                         />
-                        <Link to="/app/transactions/$txId" params={{ txId: r.id }} className="flex-1 min-w-0">
+                        <Link
+                          to="/app/transactions/$txId"
+                          params={{ txId: r.id }}
+                          className="flex-1 min-w-0"
+                        >
                           <div className="text-sm font-semibold truncate">
                             {p ? `${p.first_name} ${p.last_name}` : "Unknown user"}
                           </div>
@@ -293,7 +351,9 @@ function AdminWithdrawals() {
                           </div>
                         </Link>
                         <div className="text-right">
-                          <div className="text-sm font-bold">-{formatMoney(Number(r.amount), r.currency)}</div>
+                          <div className="text-sm font-bold">
+                            -{formatMoney(Number(r.amount), r.currency)}
+                          </div>
                           <span className="inline-flex items-center gap-1 rounded-full border border-warning/30 bg-warning/15 px-1.5 py-0.5 text-[9px] font-medium text-warning">
                             Pending
                           </span>
@@ -326,10 +386,17 @@ function AdminWithdrawals() {
 
       {/* Confirmation modal */}
       {confirm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center" onClick={() => !busy && setConfirm(null)}>
-          <div className="w-full max-w-md rounded-t-3xl border border-border bg-card p-5 sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center"
+          onClick={() => !busy && setConfirm(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-t-3xl border border-border bg-card p-5 sm:rounded-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-base font-semibold">
-              {confirm.action === "approve" ? "Approve" : "Reject"} {confirm.ids.length} withdrawal{confirm.ids.length > 1 ? "s" : ""}?
+              {confirm.action === "approve" ? "Approve" : "Reject"} {confirm.ids.length} withdrawal
+              {confirm.ids.length > 1 ? "s" : ""}?
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
               {confirm.action === "approve"

@@ -40,7 +40,9 @@ export function ScreenHeader({
       </div>
       {right}
       {!title && (
-        <Link to="/app" className="text-[11px] text-muted-foreground hover:text-foreground">Home</Link>
+        <Link to="/app" className="text-[11px] text-muted-foreground hover:text-foreground">
+          Home
+        </Link>
       )}
     </div>
   );

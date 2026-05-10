@@ -28,9 +28,24 @@ type Tx = {
 type Method = { id: string; kind: string; label: string; details: Record<string, unknown> };
 
 function statusStyle(s: string) {
-  if (s === "completed") return { label: "Completed", icon: CheckCircle2, cls: "bg-success/15 text-success border-success/30" };
-  if (s === "pending") return { label: "Pending review", icon: Clock, cls: "bg-warning/15 text-warning border-warning/30" };
-  if (s === "failed" || s === "rejected") return { label: "Failed", icon: XCircle, cls: "bg-destructive/15 text-destructive border-destructive/30" };
+  if (s === "completed")
+    return {
+      label: "Completed",
+      icon: CheckCircle2,
+      cls: "bg-success/15 text-success border-success/30",
+    };
+  if (s === "pending")
+    return {
+      label: "Pending review",
+      icon: Clock,
+      cls: "bg-warning/15 text-warning border-warning/30",
+    };
+  if (s === "failed" || s === "rejected")
+    return {
+      label: "Failed",
+      icon: XCircle,
+      cls: "bg-destructive/15 text-destructive border-destructive/30",
+    };
   return { label: s, icon: Clock, cls: "bg-muted text-muted-foreground border-border" };
 }
 
@@ -47,12 +62,18 @@ function TxDetail() {
     const { data } = await supabase.from("transactions").select("*").eq("id", txId).maybeSingle();
     setTx(data as Tx | null);
     if (data?.method_id) {
-      const { data: m } = await supabase.from("withdrawal_methods").select("id,kind,label,details").eq("id", data.method_id).maybeSingle();
+      const { data: m } = await supabase
+        .from("withdrawal_methods")
+        .select("id,kind,label,details")
+        .eq("id", data.method_id)
+        .maybeSingle();
       setMethod(m as Method | null);
     }
     const path = (data as Tx | null)?.proof_path;
     if (path) {
-      const { data: signed } = await supabase.storage.from("payment-proofs").createSignedUrl(path, 60 * 10);
+      const { data: signed } = await supabase.storage
+        .from("payment-proofs")
+        .createSignedUrl(path, 60 * 10);
       setProofUrl(signed?.signedUrl ?? null);
     } else {
       setProofUrl(null);
@@ -69,24 +90,35 @@ function TxDetail() {
         (payload) => setTx(payload.new as Tx),
       )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
     /* eslint-disable-next-line */
   }, [txId]);
 
   if (!tx) {
     return (
       <div className="px-5 pt-6 pb-8">
-        <button onClick={() => nav({ to: "/app/withdrawals" })} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <button
+          onClick={() => nav({ to: "/app/withdrawals" })}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
-        <div className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">Loading…</div>
+        <div className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+          Loading…
+        </div>
       </div>
     );
   }
 
   const st = statusStyle(tx.status);
   const Icon = st.icon;
-  const isCredit = tx.type === "deposit" || tx.type === "earning" || tx.type === "referral" || tx.type === "resale_sell";
+  const isCredit =
+    tx.type === "deposit" ||
+    tx.type === "earning" ||
+    tx.type === "referral" ||
+    tx.type === "resale_sell";
   const canModerate = isAdmin && tx.user_id !== profile?.id && tx.status === "pending";
 
   const setStatus = async (next: "completed" | "rejected") => {
@@ -114,18 +146,29 @@ function TxDetail() {
 
   return (
     <div className="px-5 pt-6 pb-8">
-      <button onClick={() => window.history.back()} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => window.history.back()}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" /> Back
       </button>
 
       {/* Hero */}
-      <div className="mt-5 rounded-2xl border border-border p-5" style={{ background: "var(--gradient-card)" }}>
-        <div className="text-[11px] uppercase tracking-wide text-muted-foreground capitalize">{tx.type.replace("_", " ")}</div>
+      <div
+        className="mt-5 rounded-2xl border border-border p-5"
+        style={{ background: "var(--gradient-card)" }}
+      >
+        <div className="text-[11px] uppercase tracking-wide text-muted-foreground capitalize">
+          {tx.type.replace("_", " ")}
+        </div>
         <div className={`mt-1 text-3xl font-bold ${isCredit ? "text-success" : ""}`}>
-          {isCredit ? "+" : "-"}{formatMoney(Number(tx.amount), tx.currency)}
+          {isCredit ? "+" : "-"}
+          {formatMoney(Number(tx.amount), tx.currency)}
         </div>
         <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium border-border bg-background/40">
-          <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 ${st.cls}`}>
+          <span
+            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 ${st.cls}`}
+          >
             <Icon className="h-3 w-3" />
             {st.label}
           </span>
@@ -145,7 +188,9 @@ function TxDetail() {
         <section className="mt-5">
           <h2 className="mb-2 text-sm font-semibold">Payment method</h2>
           <div className="rounded-2xl border border-border bg-card p-4">
-            <div className="text-xs text-muted-foreground capitalize">{method.kind.replace("_", " ")}</div>
+            <div className="text-xs text-muted-foreground capitalize">
+              {method.kind.replace("_", " ")}
+            </div>
             <div className="mt-0.5 text-sm font-semibold">{method.label}</div>
             <pre className="mt-3 overflow-x-auto rounded-lg bg-background/60 p-3 text-[11px] text-muted-foreground">
               {JSON.stringify(method.details, null, 2)}
@@ -164,15 +209,26 @@ function TxDetail() {
             {proofUrl ? (
               <>
                 <a href={proofUrl} target="_blank" rel="noreferrer" className="block">
-                  <img src={proofUrl} alt="Payment proof" className="max-h-72 w-full rounded-lg object-contain bg-background/60" />
+                  <img
+                    src={proofUrl}
+                    alt="Payment proof"
+                    className="max-h-72 w-full rounded-lg object-contain bg-background/60"
+                  />
                 </a>
                 <div className="mt-2 flex gap-2">
-                  <a href={proofUrl} target="_blank" rel="noreferrer"
-                    className="flex-1 rounded-lg border border-border py-2 text-center text-xs font-medium hover:bg-background/40">
+                  <a
+                    href={proofUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 rounded-lg border border-border py-2 text-center text-xs font-medium hover:bg-background/40"
+                  >
                     Open
                   </a>
-                  <a href={proofUrl} download
-                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground">
+                  <a
+                    href={proofUrl}
+                    download
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-primary py-2 text-xs font-semibold text-primary-foreground"
+                  >
                     <Download className="h-3 w-3" /> Download
                   </a>
                 </div>
@@ -198,34 +254,54 @@ function TxDetail() {
             <ShieldCheck className="h-3.5 w-3.5" /> Admin actions
           </div>
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Approving marks the withdrawal completed. Rejecting marks it failed; the user's balance is not changed (it was already debited at request time).
+            Approving marks the withdrawal completed. Rejecting marks it failed; the user's balance
+            is not changed (it was already debited at request time).
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <button disabled={busy} onClick={() => setStatus("completed")}
-              className="rounded-xl bg-success py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50">
+            <button
+              disabled={busy}
+              onClick={() => setStatus("completed")}
+              className="rounded-xl bg-success py-2.5 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50"
+            >
               Approve
             </button>
-            <button disabled={busy} onClick={() => setStatus("rejected")}
-              className="rounded-xl border border-destructive/40 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-50">
+            <button
+              disabled={busy}
+              onClick={() => setStatus("rejected")}
+              className="rounded-xl border border-destructive/40 py-2.5 text-sm font-semibold text-destructive hover:bg-destructive/10 disabled:opacity-50"
+            >
               Reject
             </button>
           </div>
         </section>
       )}
 
-      <Link to="/app/withdrawals" className="mt-6 block text-center text-xs text-muted-foreground hover:text-foreground">
+      <Link
+        to="/app/withdrawals"
+        className="mt-6 block text-center text-xs text-muted-foreground hover:text-foreground"
+      >
         View all withdrawals
       </Link>
     </div>
   );
 }
 
-function DetailRow({ label, value, onCopy }: { label: string; value: string; onCopy?: () => void }) {
+function DetailRow({
+  label,
+  value,
+  onCopy,
+}: {
+  label: string;
+  value: string;
+  onCopy?: () => void;
+}) {
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-3">
       <span className="text-xs text-muted-foreground">{label}</span>
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-xs font-medium truncate max-w-[180px]" title={value}>{value}</span>
+        <span className="text-xs font-medium truncate max-w-[180px]" title={value}>
+          {value}
+        </span>
         {onCopy && (
           <button onClick={onCopy} className="text-muted-foreground hover:text-foreground">
             <Copy className="h-3 w-3" />

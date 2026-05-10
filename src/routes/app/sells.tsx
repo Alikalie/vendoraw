@@ -9,18 +9,33 @@ import { buyResaleListing, cancelResaleListing } from "@/server/resale";
 import { callAuthed } from "@/lib/server-call";
 
 type Investment = {
-  id: string; product_id: string; purchase_price: number; daily_earning: number;
-  duration_days: number; total_return: number; status: string; end_date: string;
+  id: string;
+  product_id: string;
+  purchase_price: number;
+  daily_earning: number;
+  duration_days: number;
+  total_return: number;
+  status: string;
+  end_date: string;
   products: { name: string } | null;
 };
 
 type Listing = {
-  id: string; investment_id: string; seller_id: string; price: number; status: string;
+  id: string;
+  investment_id: string;
+  seller_id: string;
+  price: number;
+  status: string;
   investments: { products: { name: string } | null; total_return: number } | null;
 };
 
 type MyListing = {
-  id: string; investment_id: string; price: number; status: string; created_at: string; sold_at: string | null;
+  id: string;
+  investment_id: string;
+  price: number;
+  status: string;
+  created_at: string;
+  sold_at: string | null;
   investments: { products: { name: string } | null } | null;
 };
 
@@ -47,14 +62,18 @@ function SellsTab() {
 
     const { data: invs } = await supabase
       .from("investments")
-      .select("id,product_id,purchase_price,daily_earning,duration_days,total_return,status,end_date,products(name)")
-      .eq("user_id", profile.id).eq("status", "active");
+      .select(
+        "id,product_id,purchase_price,daily_earning,duration_days,total_return,status,end_date,products(name)",
+      )
+      .eq("user_id", profile.id)
+      .eq("status", "active");
     setMine(((invs as unknown as Investment[]) ?? []).filter((i) => !lockedIds.has(i.id)));
 
     const { data: lst } = await supabase
       .from("resale_listings")
       .select("id,investment_id,seller_id,price,status,investments(total_return,products(name))")
-      .eq("status", "open").neq("seller_id", profile.id);
+      .eq("status", "open")
+      .neq("seller_id", profile.id);
     setMarket((lst as unknown as Listing[]) ?? []);
 
     const { data: mineLst } = await supabase
@@ -65,7 +84,9 @@ function SellsTab() {
       .limit(20);
     setMyListings((mineLst as unknown as MyListing[]) ?? []);
   };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [profile?.id]);
+  useEffect(() => {
+    load(); /* eslint-disable-next-line */
+  }, [profile?.id]);
 
   if (!profile) return null;
   const cur = profile.currency;
@@ -78,7 +99,9 @@ function SellsTab() {
     if (!isFinite(price) || price <= 0) return toast.error("Invalid price");
     setBusy(inv.id);
     const { error } = await supabase.from("resale_listings").insert({
-      investment_id: inv.id, seller_id: profile.id, price,
+      investment_id: inv.id,
+      seller_id: profile.id,
+      price,
     });
     setBusy(null);
     if (error) return toast.error(error.message);
@@ -119,7 +142,9 @@ function SellsTab() {
     <div className="px-5 pt-6 pb-6 space-y-6">
       <div>
         <h1 className="text-xl font-bold">Sells</h1>
-        <p className="mt-1 text-xs text-muted-foreground">List your active investments early for liquidity.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          List your active investments early for liquidity.
+        </p>
       </div>
 
       <section>
@@ -131,10 +156,16 @@ function SellsTab() {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm font-semibold">{inv.products?.name ?? "Investment"}</div>
-                  <div className="text-xs text-muted-foreground">Paid {formatMoney(inv.purchase_price, cur)} · ROI {formatMoney(inv.total_return, cur)}</div>
+                  <div className="text-xs text-muted-foreground">
+                    Paid {formatMoney(inv.purchase_price, cur)} · ROI{" "}
+                    {formatMoney(inv.total_return, cur)}
+                  </div>
                 </div>
-                <button onClick={() => list(inv)} disabled={busy === inv.id}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50">
+                <button
+                  onClick={() => list(inv)}
+                  disabled={busy === inv.id}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 disabled:opacity-50"
+                >
                   <Tag className="h-3 w-3" /> List
                 </button>
               </div>
@@ -148,19 +179,28 @@ function SellsTab() {
         <div className="space-y-2">
           {myListings.length === 0 && <Empty text="You have no resale listings." />}
           {myListings.map((l) => (
-            <div key={l.id} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
+            <div
+              key={l.id}
+              className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
+            >
               <div className="min-w-0">
-                <div className="text-sm font-semibold truncate">{l.investments?.products?.name ?? "Investment"}</div>
+                <div className="text-sm font-semibold truncate">
+                  {l.investments?.products?.name ?? "Investment"}
+                </div>
                 <div className="text-[11px] text-muted-foreground capitalize">
-                  {l.status}{l.sold_at ? ` · ${new Date(l.sold_at).toLocaleDateString()}` : ""}
+                  {l.status}
+                  {l.sold_at ? ` · ${new Date(l.sold_at).toLocaleDateString()}` : ""}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-sm font-bold">{formatMoney(l.price, cur)}</div>
                 {l.status === "open" && (
-                  <button onClick={() => cancelListing(l.id)} disabled={busy === l.id}
+                  <button
+                    onClick={() => cancelListing(l.id)}
+                    disabled={busy === l.id}
                     title="Cancel listing"
-                    className="rounded-full border border-border p-1.5 hover:bg-destructive/10 disabled:opacity-50">
+                    className="rounded-full border border-border p-1.5 hover:bg-destructive/10 disabled:opacity-50"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 )}
@@ -175,15 +215,25 @@ function SellsTab() {
         <div className="space-y-2">
           {market.length === 0 && <Empty text="No resale offers right now." />}
           {market.map((l) => (
-            <div key={l.id} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
+            <div
+              key={l.id}
+              className="flex items-center justify-between rounded-2xl border border-border bg-card p-4"
+            >
               <div>
-                <div className="text-sm font-semibold">{l.investments?.products?.name ?? "Investment"}</div>
-                <div className="text-xs text-muted-foreground">Future ROI {formatMoney(l.investments?.total_return ?? 0, cur)}</div>
+                <div className="text-sm font-semibold">
+                  {l.investments?.products?.name ?? "Investment"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Future ROI {formatMoney(l.investments?.total_return ?? 0, cur)}
+                </div>
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold">{formatMoney(l.price, cur)}</div>
-                <button onClick={() => buyResale(l)} disabled={busy === l.id}
-                  className="mt-1 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                <button
+                  onClick={() => buyResale(l)}
+                  disabled={busy === l.id}
+                  className="mt-1 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                >
                   {busy === l.id ? "…" : "Buy"}
                 </button>
               </div>
@@ -196,5 +246,9 @@ function SellsTab() {
 }
 
 function Empty({ text }: { text: string }) {
-  return <div className="rounded-2xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">{text}</div>;
+  return (
+    <div className="rounded-2xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
+      {text}
+    </div>
+  );
 }

@@ -19,7 +19,9 @@ function AppLayout() {
   if (loading) {
     return (
       <MobileShell>
-        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">Loading…</div>
+        <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+          Loading…
+        </div>
       </MobileShell>
     );
   }

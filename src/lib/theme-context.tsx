@@ -41,12 +41,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyTheme(t);
     if (typeof window !== "undefined") localStorage.setItem(STORAGE_KEY, t);
     if (user) {
-      supabase.from("profiles").update({ theme: t }).eq("id", user.id).then(() => {});
+      supabase
+        .from("profiles")
+        .update({ theme: t })
+        .eq("id", user.id)
+        .then(() => {});
     }
   };
 
   return (
-    <ThemeCtx.Provider value={{ theme, toggle: () => setTheme(theme === "dark" ? "light" : "dark"), setTheme }}>
+    <ThemeCtx.Provider
+      value={{ theme, toggle: () => setTheme(theme === "dark" ? "light" : "dark"), setTheme }}
+    >
       {children}
     </ThemeCtx.Provider>
   );

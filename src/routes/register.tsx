@@ -76,29 +76,66 @@ function RegisterPage() {
 
         <form onSubmit={onSubmit} className="mt-6 space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="First name"><input required value={first} onChange={(e) => setFirst(e.target.value)} className={inputCls} /></Field>
-            <Field label="Last name"><input required value={last} onChange={(e) => setLast(e.target.value)} className={inputCls} /></Field>
+            <Field label="First name">
+              <input
+                required
+                value={first}
+                onChange={(e) => setFirst(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Last name">
+              <input
+                required
+                value={last}
+                onChange={(e) => setLast(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
           </div>
 
           <Field label="Country">
-            <select value={countryName} onChange={(e) => setCountryName(e.target.value)} className={inputCls}>
+            <select
+              value={countryName}
+              onChange={(e) => setCountryName(e.target.value)}
+              className={inputCls}
+            >
               {countries.map((c) => (
-                <option key={c.code} value={c.name}>{c.name} ({c.currency})</option>
+                <option key={c.code} value={c.name}>
+                  {c.name} ({c.currency})
+                </option>
               ))}
             </select>
           </Field>
 
           <Field label="Contact">
             <div className="flex gap-2">
-              <span className="inline-flex items-center rounded-xl border border-border bg-muted px-3 text-sm text-muted-foreground">{country.dial}</span>
-              <input required value={contact} onChange={(e) => setContact(e.target.value.replace(/[^0-9]/g, ""))} placeholder="Phone number" className={inputCls} />
+              <span className="inline-flex items-center rounded-xl border border-border bg-muted px-3 text-sm text-muted-foreground">
+                {country.dial}
+              </span>
+              <input
+                required
+                value={contact}
+                onChange={(e) => setContact(e.target.value.replace(/[^0-9]/g, ""))}
+                placeholder="Phone number"
+                className={inputCls}
+              />
             </div>
           </Field>
 
-          <Field label="Email"><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputCls} /></Field>
+          <Field label="Email">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputCls}
+            />
+          </Field>
 
           <div className="rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground">
-            Investment currency: <span className="font-semibold text-foreground">{country.currency}</span>
+            Investment currency:{" "}
+            <span className="font-semibold text-foreground">{country.currency}</span>
           </div>
 
           <Field label="Promo code (optional)">
@@ -114,11 +151,30 @@ function RegisterPage() {
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Password"><input type="password" required value={pw} onChange={(e) => setPw(e.target.value)} className={inputCls} /></Field>
-            <Field label="Confirm"><input type="password" required value={pw2} onChange={(e) => setPw2(e.target.value)} className={inputCls} /></Field>
+            <Field label="Password">
+              <input
+                type="password"
+                required
+                value={pw}
+                onChange={(e) => setPw(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Confirm">
+              <input
+                type="password"
+                required
+                value={pw2}
+                onChange={(e) => setPw2(e.target.value)}
+                className={inputCls}
+              />
+            </Field>
           </div>
 
-          <button disabled={loading} className="mt-2 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50">
+          <button
+            disabled={loading}
+            className="mt-2 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          >
             {loading ? "Creating account…" : "Create account"}
           </button>
 
@@ -129,14 +185,17 @@ function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-primary hover:underline">Log in</Link>
+          <Link to="/login" className="font-semibold text-primary hover:underline">
+            Log in
+          </Link>
         </p>
       </div>
     </div>
   );
 }
 
-const inputCls = "w-full rounded-xl border border-border bg-input px-4 py-3 text-sm outline-none focus:border-primary";
+const inputCls =
+  "w-full rounded-xl border border-border bg-input px-4 py-3 text-sm outline-none focus:border-primary";
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">

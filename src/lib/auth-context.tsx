@@ -60,7 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Hydrate FX rates once; safe to call repeatedly (idempotent cache).
-    loadRates().catch(() => { /* fall back to static rates */ });
+    loadRates().catch(() => {
+      /* fall back to static rates */
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);
@@ -92,7 +94,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         (payload) => setProfile(payload.new as Profile),
       )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [user?.id]);
 
   const refreshProfile = async () => {
@@ -104,7 +108,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthCtx.Provider value={{ user, session, profile, isAdmin, isSuperAdmin, loading, refreshProfile, signOut }}>
+    <AuthCtx.Provider
+      value={{ user, session, profile, isAdmin, isSuperAdmin, loading, refreshProfile, signOut }}
+    >
       {children}
     </AuthCtx.Provider>
   );

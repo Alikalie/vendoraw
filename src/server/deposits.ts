@@ -67,10 +67,7 @@ export const moderateDeposit = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
     const isAdmin = (roles ?? []).some((r) => r.role === "admin");
     if (!isAdmin) throw new Error("Forbidden");
 
@@ -135,10 +132,13 @@ export const moderateDeposit = createServerFn({ method: "POST" })
           .eq("id", prof.referred_by)
           .maybeSingle();
         if (aff) {
-          await supabase.from("profiles").update({
-            balance: Number(aff.balance) + commission,
-            total_earned: Number(aff.total_earned) + commission,
-          }).eq("id", prof.referred_by);
+          await supabase
+            .from("profiles")
+            .update({
+              balance: Number(aff.balance) + commission,
+              total_earned: Number(aff.total_earned) + commission,
+            })
+            .eq("id", prof.referred_by);
           await supabase.from("transactions").insert({
             user_id: prof.referred_by,
             type: "referral",

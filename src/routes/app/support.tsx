@@ -11,12 +11,19 @@ function SupportPage() {
   const nav = useNavigate();
   const [content, setContent] = useState<{ title: string; body: string } | null>(null);
   useEffect(() => {
-    supabase.from("site_content" as never).select("title,body").eq("id", "support").maybeSingle()
+    supabase
+      .from("site_content" as never)
+      .select("title,body")
+      .eq("id", "support")
+      .maybeSingle()
       .then(({ data }) => setContent(data as { title: string; body: string } | null));
   }, []);
   return (
     <div className="px-5 pt-6 pb-8">
-      <button onClick={() => nav({ to: "/app/profile" })} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => nav({ to: "/app/profile" })}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-4 w-4" /> Back
       </button>
       <div className="mt-5 flex items-center gap-2">

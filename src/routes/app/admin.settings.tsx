@@ -6,9 +6,13 @@ export const Route = createFileRoute("/app/admin/settings")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });
-    const { data: roles } = await supabase.from("user_roles" as never).select("role").eq("user_id", data.user.id);
+    const { data: roles } = await supabase
+      .from("user_roles" as never)
+      .select("role")
+      .eq("user_id", data.user.id);
     const list = (roles as { role: string }[] | null) ?? [];
-    if (!list.some((r) => r.role === "admin" || r.role === "super_admin")) throw redirect({ to: "/app" });
+    if (!list.some((r) => r.role === "admin" || r.role === "super_admin"))
+      throw redirect({ to: "/app" });
   },
   component: Page,
 });
@@ -18,7 +22,9 @@ function Page() {
     <div className="px-5 pt-2 pb-8">
       <ScreenHeader title="Settings" subtitle="Admin" />
       <h1 className="text-xl font-bold">Settings</h1>
-      <p className="mt-1 text-xs text-muted-foreground">Adjust referral bonus, fees, base currency and platform kill-switches.</p>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Adjust referral bonus, fees, base currency and platform kill-switches.
+      </p>
       <div className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
         Coming soon — this dashboard is being built out.
       </div>

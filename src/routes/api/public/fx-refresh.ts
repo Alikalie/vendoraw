@@ -10,8 +10,7 @@ function authorize(request: Request): boolean {
   const secret = process.env.FX_REFRESH_SECRET;
   if (!secret) return false;
   const provided =
-    request.headers.get("x-cron-secret") ??
-    new URL(request.url).searchParams.get("key");
+    request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("key");
   return provided === secret;
 }
 
