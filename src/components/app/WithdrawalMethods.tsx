@@ -50,8 +50,13 @@ export function WithdrawalMethodsManager({ onClose }: { onClose: () => void }) {
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [profile?.id]);
 
   if (!profile) return null;
+  const locked = methods.length > 0;
 
   const remove = async (id: string) => {
+    if (locked) {
+      toast.error("Payment account is locked and cannot be removed.");
+      return;
+    }
     if (!confirm("Remove this withdrawal method?")) return;
     const { error } = await supabase.from("withdrawal_methods").delete().eq("id", id);
     if (error) return toast.error(error.message);
@@ -60,6 +65,10 @@ export function WithdrawalMethodsManager({ onClose }: { onClose: () => void }) {
   };
 
   const setDefault = async (id: string) => {
+    if (locked) {
+      toast.error("Payment account is locked and cannot be changed.");
+      return;
+    }
     setBusy(true);
     await supabase.from("withdrawal_methods").update({ is_default: false }).eq("user_id", profile.id);
     const { error } = await supabase.from("withdrawal_methods").update({ is_default: true }).eq("id", id);
@@ -70,6 +79,10 @@ export function WithdrawalMethodsManager({ onClose }: { onClose: () => void }) {
   };
 
   const add = async (kind: Kind, details: Record<string, string>, label: string) => {
+    if (locked) {
+      toast.error("Payment account is locked and cannot be changed.");
+      return;
+    }
     setBusy(true);
     const { error } = await supabase.from("withdrawal_methods").insert({
       user_id: profile.id, kind, label, details,
@@ -110,22 +123,30 @@ export function WithdrawalMethodsManager({ onClose }: { onClose: () => void }) {
                     <div className="mt-0.5 truncate text-[11px] text-muted-foreground">{summarize(m)}</div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    {!m.is_default && (
+                    {!locked && !m.is_default && (
                       <button onClick={() => setDefault(m.id)} disabled={busy} title="Set default"
                         className="rounded-full p-1.5 hover:bg-primary/10"><Star className="h-3.5 w-3.5 text-muted-foreground" /></button>
                     )}
-                    <button onClick={() => remove(m.id)} title="Remove"
-                      className="rounded-full p-1.5 hover:bg-destructive/10"><Trash2 className="h-3.5 w-3.5 text-destructive" /></button>
+                    {!locked && (
+                      <button onClick={() => remove(m.id)} title="Remove"
+                        className="rounded-full p-1.5 hover:bg-destructive/10"><Trash2 className="h-3.5 w-3.5 text-destructive" /></button>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <AddBtn icon={Smartphone} label="Mobile" onClick={() => setAdding("mobile_money")} />
-              <AddBtn icon={Building2} label="Bank" onClick={() => setAdding("bank")} />
-              <AddBtn icon={Mail} label="PayPal" onClick={() => setAdding("paypal")} />
-            </div>
+            {locked ? (
+              <div className="mt-4 rounded-2xl border border-border bg-background/50 p-4 text-sm text-muted-foreground">
+                Payment account is set and locked. You cannot add, remove, or edit linked payment accounts.
+              </div>
+            ) : (
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                <AddBtn icon={Smartphone} label="Mobile" onClick={() => setAdding("mobile_money")} />
+                <AddBtn icon={Building2} label="Bank" onClick={() => setAdding("bank")} />
+                <AddBtn icon={Mail} label="PayPal" onClick={() => setAdding("paypal")} />
+              </div>
+            )}
           </>
         )}
 

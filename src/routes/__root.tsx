@@ -39,7 +39,7 @@ export const Route = createRootRoute({
       { property: "og:description", content: "Vendora is a global trading and investment platform that allows users to buy, sell, and earn from digital product assets within a unified wallet system." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@Vendora" },
       { name: "twitter:title", content: "Vendora — Trade & Earn" },
       { name: "twitter:description", content: "Vendora is a global trading and investment platform that allows users to buy, sell, and earn from digital product assets within a unified wallet system." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/qkkfgkOWgfgubahZTD4yptwyVXo2/social-images/social-1777301892541-ChatGPT_Image_Apr_27,_2026,_02_44_31_PM.webp" },
