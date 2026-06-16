@@ -283,6 +283,34 @@ function DepositPage() {
             <div className="text-xs text-muted-foreground">You will pay</div>
             <div className="mt-0.5 text-2xl font-bold">{formatMoney(amt, cur)}</div>
           </div>
+          {accounts.length > 0 && (
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <label className="block">
+                <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  Choose payment account
+                </span>
+                <select
+                  value={accountId}
+                  onChange={(e) => setAccountId(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-border bg-background/30 px-3 py-2.5 text-sm outline-none focus:border-primary"
+                >
+                  {accounts.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name} — {a.currency} ({a.kind})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {(() => {
+                const sel = accounts.find((a) => a.id === accountId);
+                return sel ? (
+                  <pre className="mt-3 whitespace-pre-wrap text-xs text-muted-foreground font-sans">
+                    {sel.instructions}
+                  </pre>
+                ) : null;
+              })()}
+            </div>
+          )}
           <div className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-sm font-semibold">{instructions?.title ?? "How to pay"}</h2>
             <pre className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground font-sans">
