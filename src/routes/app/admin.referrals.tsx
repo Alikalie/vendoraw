@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CheckCircle2, XCircle, Users, Loader2, Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin/referrals")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });

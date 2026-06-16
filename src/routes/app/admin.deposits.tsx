@@ -9,6 +9,7 @@ import { callAuthed } from "@/lib/server-call";
 import { moderateDeposit } from "@/server/deposits";
 
 export const Route = createFileRoute("/app/admin/deposits")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });

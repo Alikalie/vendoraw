@@ -19,6 +19,7 @@ import {
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/users")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });
