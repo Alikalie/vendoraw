@@ -31,6 +31,7 @@ import { Route as AppAdminTransactionsRouteImport } from './routes/app/admin.tra
 import { Route as AppAdminSettingsRouteImport } from './routes/app/admin.settings'
 import { Route as AppAdminReferralsRouteImport } from './routes/app/admin.referrals'
 import { Route as AppAdminProductsRouteImport } from './routes/app/admin.products'
+import { Route as AppAdminPaymentAccountsRouteImport } from './routes/app/admin.payment-accounts'
 import { Route as AppAdminInvestmentsRouteImport } from './routes/app/admin.investments'
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 import { Route as AppAdminContentRouteImport } from './routes/app/admin.content'
@@ -147,6 +148,11 @@ const AppAdminProductsRoute = AppAdminProductsRouteImport.update({
   path: '/admin/products',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminPaymentAccountsRoute = AppAdminPaymentAccountsRouteImport.update({
+  id: '/admin/payment-accounts',
+  path: '/admin/payment-accounts',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminInvestmentsRoute = AppAdminInvestmentsRouteImport.update({
   id: '/admin/investments',
   path: '/admin/investments',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/investments': typeof AppAdminInvestmentsRoute
+  '/app/admin/payment-accounts': typeof AppAdminPaymentAccountsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/referrals': typeof AppAdminReferralsRoute
   '/app/admin/settings': typeof AppAdminSettingsRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/investments': typeof AppAdminInvestmentsRoute
+  '/app/admin/payment-accounts': typeof AppAdminPaymentAccountsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/referrals': typeof AppAdminReferralsRoute
   '/app/admin/settings': typeof AppAdminSettingsRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
   '/app/admin/investments': typeof AppAdminInvestmentsRoute
+  '/app/admin/payment-accounts': typeof AppAdminPaymentAccountsRoute
   '/app/admin/products': typeof AppAdminProductsRoute
   '/app/admin/referrals': typeof AppAdminReferralsRoute
   '/app/admin/settings': typeof AppAdminSettingsRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/investments'
+    | '/app/admin/payment-accounts'
     | '/app/admin/products'
     | '/app/admin/referrals'
     | '/app/admin/settings'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/investments'
+    | '/app/admin/payment-accounts'
     | '/app/admin/products'
     | '/app/admin/referrals'
     | '/app/admin/settings'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/app/admin/content'
     | '/app/admin/deposits'
     | '/app/admin/investments'
+    | '/app/admin/payment-accounts'
     | '/app/admin/products'
     | '/app/admin/referrals'
     | '/app/admin/settings'
@@ -513,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminProductsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/payment-accounts': {
+      id: '/app/admin/payment-accounts'
+      path: '/admin/payment-accounts'
+      fullPath: '/app/admin/payment-accounts'
+      preLoaderRoute: typeof AppAdminPaymentAccountsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/investments': {
       id: '/app/admin/investments'
       path: '/admin/investments'
@@ -578,6 +597,7 @@ interface AppRouteChildren {
   AppAdminContentRoute: typeof AppAdminContentRoute
   AppAdminDepositsRoute: typeof AppAdminDepositsRoute
   AppAdminInvestmentsRoute: typeof AppAdminInvestmentsRoute
+  AppAdminPaymentAccountsRoute: typeof AppAdminPaymentAccountsRoute
   AppAdminProductsRoute: typeof AppAdminProductsRoute
   AppAdminReferralsRoute: typeof AppAdminReferralsRoute
   AppAdminSettingsRoute: typeof AppAdminSettingsRoute
@@ -602,6 +622,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminContentRoute: AppAdminContentRoute,
   AppAdminDepositsRoute: AppAdminDepositsRoute,
   AppAdminInvestmentsRoute: AppAdminInvestmentsRoute,
+  AppAdminPaymentAccountsRoute: AppAdminPaymentAccountsRoute,
   AppAdminProductsRoute: AppAdminProductsRoute,
   AppAdminReferralsRoute: AppAdminReferralsRoute,
   AppAdminSettingsRoute: AppAdminSettingsRoute,
