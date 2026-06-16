@@ -211,6 +211,45 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_accounts: {
+        Row: {
+          active: boolean
+          created_at: string
+          currency: string
+          details: Json
+          id: string
+          instructions: string
+          kind: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          details?: Json
+          id?: string
+          instructions?: string
+          kind?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          details?: Json
+          id?: string
+          instructions?: string
+          kind?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
@@ -581,6 +620,10 @@ export type Database = {
       }
     }
     Functions: {
+      admin_adjust_referral_commission: {
+        Args: { _amount: number; _note?: string; _user_id: string }
+        Returns: Json
+      }
       approve_referral_application: { Args: { _app_id: string }; Returns: Json }
       gen_referral_code: { Args: never; Returns: string }
       has_role: {
@@ -602,6 +645,10 @@ export type Database = {
       process_daily_earnings: { Args: never; Returns: Json }
       reject_referral_application: {
         Args: { _app_id: string; _reason?: string }
+        Returns: Json
+      }
+      request_affiliate_payout: {
+        Args: { _amount: number; _method_id?: string }
         Returns: Json
       }
     }
