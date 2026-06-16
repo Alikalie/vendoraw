@@ -163,6 +163,25 @@ function ApprovedDashboard({
     await navigator.clipboard.writeText(val);
     toast.success(`${label} copied`);
   };
+  const { profile } = useAuth();
+  const [payoutAmt, setPayoutAmt] = useState("");
+  const [requesting, setRequesting] = useState(false);
+  const isMonday = new Date().getUTCDay() === 1;
+  const MIN = 25;
+  const requestPayout = async () => {
+    const amt = Number(payoutAmt);
+    if (!isFinite(amt) || amt <= 0) return toast.error("Enter an amount");
+    if (!isMonday) return toast.error("Affiliate payouts are only available on Mondays (UTC)");
+    if (amt < MIN) return toast.error(`Minimum payout is $${MIN}`);
+    setRequesting(true);
+    const { error } = await supabase.rpc("request_affiliate_payout" as never, {
+      _amount: amt,
+    } as never);
+    setRequesting(false);
+    if (error) return toast.error(error.message);
+    toast.success("Payout requested — awaiting admin approval");
+    setPayoutAmt("");
+  };
   return (
     <div className="mt-5 space-y-5">
       <div className="rounded-2xl border border-success/30 bg-success/5 p-4">
@@ -207,6 +226,40 @@ function ApprovedDashboard({
           value={`${totalCommission.toFixed(2)} ${currency}`}
           tone="success"
         />
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Request payout</h3>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${isMonday ? "bg-success/15 text-success" : "bg-muted text-muted-foreground"}`}
+          >
+            {isMonday ? "Open today" : "Mondays only"}
+          </span>
+        </div>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Minimum ${MIN} · paid Mondays (UTC) · available balance{" "}
+          <span className="font-semibold text-foreground">
+            {Number(profile?.balance ?? 0).toFixed(2)} {currency}
+          </span>
+        </p>
+        <div className="mt-3 flex gap-2">
+          <input
+            type="number"
+            inputMode="decimal"
+            value={payoutAmt}
+            onChange={(e) => setPayoutAmt(e.target.value)}
+            placeholder={`Amount (min $${MIN})`}
+            className="flex-1 rounded-xl border border-border bg-background/30 px-3 py-2 text-sm outline-none focus:border-primary"
+          />
+          <button
+            disabled={requesting || !isMonday}
+            onClick={requestPayout}
+            className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {requesting ? "…" : "Request"}
+          </button>
+        </div>
       </div>
 
       <div>
