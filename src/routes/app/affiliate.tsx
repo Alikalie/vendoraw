@@ -126,7 +126,7 @@ function AffiliatePage() {
           referred={referred}
           commissions={commissions}
           totalCommission={totalCommission}
-          currency={cur}
+          currency={cur ?? "USD"}
         />
       ) : app && app.status === "pending" ? (
         <PendingCard app={app} />
