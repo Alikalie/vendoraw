@@ -22,6 +22,7 @@ import {
   BookOpen,
   RefreshCw,
   History,
+  Landmark,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -197,6 +198,12 @@ function AdminHome() {
       title: "Site content (CMS)",
       desc: "Help, Privacy & instructions",
       icon: FileText,
+    },
+    {
+      to: "/app/admin/payment-accounts",
+      title: "Payment accounts",
+      desc: "Deposit destinations (CRUD)",
+      icon: Landmark,
     },
     {
       to: "/app/admin/settings",
