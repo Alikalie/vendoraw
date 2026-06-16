@@ -23,6 +23,10 @@ function DepositPage() {
   const [methodId, setMethodId] = useState<string>("");
   const [methods, setMethods] = useState<WithdrawalMethod[]>([]);
   const [instructions, setInstructions] = useState<{ title: string; body: string } | null>(null);
+  const [accounts, setAccounts] = useState<
+    { id: string; name: string; kind: string; currency: string; instructions: string }[]
+  >([]);
+  const [accountId, setAccountId] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -46,6 +50,16 @@ function DepositPage() {
       .eq("id", "deposit_instructions")
       .maybeSingle()
       .then(({ data }) => setInstructions(data as { title: string; body: string } | null));
+    supabase
+      .from("payment_accounts" as never)
+      .select("id,name,kind,currency,instructions")
+      .eq("active", true)
+      .order("sort_order", { ascending: true })
+      .then(({ data }) => {
+        const list = (data as { id: string; name: string; kind: string; currency: string; instructions: string }[] | null) ?? [];
+        setAccounts(list);
+        if (list[0]) setAccountId(list[0].id);
+      });
   }, [profile?.id]);
 
   const cur = profile?.currency ?? "USD";
