@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
 
 export const Route = createFileRoute("/app/admin/audit")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });

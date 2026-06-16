@@ -39,6 +39,7 @@ import { callAuthed } from "@/lib/server-call";
 import { refreshExchangeRates } from "@/server/fx";
 
 export const Route = createFileRoute("/app/admin/")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });

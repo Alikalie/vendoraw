@@ -6,6 +6,7 @@ import { FileText, Save, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/content")({
+  ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });
