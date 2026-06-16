@@ -101,9 +101,13 @@ function AdminPaymentAccounts() {
       active: form.active,
       sort_order: Number(form.sort_order) || 0,
     };
+    const tbl = supabase.from("payment_accounts" as never) as unknown as {
+      update: (p: unknown) => { eq: (k: string, v: string) => Promise<{ error: { message: string } | null }> };
+      insert: (p: unknown) => Promise<{ error: { message: string } | null }>;
+    };
     const { error } = editing
-      ? await supabase.from("payment_accounts" as never).update(payload).eq("id", editing.id)
-      : await supabase.from("payment_accounts" as never).insert(payload);
+      ? await tbl.update(payload).eq("id", editing.id)
+      : await tbl.insert(payload);
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success(editing ? "Updated" : "Created");
@@ -112,10 +116,10 @@ function AdminPaymentAccounts() {
   };
 
   const toggleActive = async (a: Account) => {
-    const { error } = await supabase
-      .from("payment_accounts" as never)
-      .update({ active: !a.active })
-      .eq("id", a.id);
+    const tbl = supabase.from("payment_accounts" as never) as unknown as {
+      update: (p: unknown) => { eq: (k: string, v: string) => Promise<{ error: { message: string } | null }> };
+    };
+    const { error } = await tbl.update({ active: !a.active }).eq("id", a.id);
     if (error) return toast.error(error.message);
     setItems((p) => p.map((x) => (x.id === a.id ? { ...x, active: !a.active } : x)));
   };
