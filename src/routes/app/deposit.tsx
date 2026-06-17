@@ -64,7 +64,8 @@ function DepositPage() {
 
   const cur = profile?.currency ?? "USD";
   const amt = Number(amount);
-  const validAmount = isFinite(amt) && amt > 0;
+  const MIN_DEPOSIT = 10;
+  const validAmount = isFinite(amt) && amt >= MIN_DEPOSIT;
 
   // Realtime: when admin approves, jump straight to home with a toast
   useEffect(() => {
@@ -102,7 +103,9 @@ function DepositPage() {
 
   const goNext = () => {
     if (step === "amount") {
-      if (!validAmount) return toast.error("Enter a valid amount");
+      if (!isFinite(amt) || amt <= 0) return toast.error("Enter a valid amount");
+      if (amt < MIN_DEPOSIT)
+        return toast.error(`Minimum deposit is ${formatMoney(MIN_DEPOSIT, cur)}`);
       setStep("instructions");
     } else if (step === "instructions") {
       setStep("proof");
@@ -234,13 +237,22 @@ function DepositPage() {
             <input
               type="number"
               inputMode="decimal"
-              min={1}
+              min={MIN_DEPOSIT}
+              step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
+              placeholder={`${MIN_DEPOSIT}.00`}
               className="mt-1 w-full rounded-xl border border-border bg-background/30 px-4 py-3 text-2xl font-bold outline-none focus:border-primary"
             />
           </label>
+          <p className="text-[11px] text-muted-foreground">
+            Minimum deposit is {formatMoney(MIN_DEPOSIT, cur)}.
+            {amount && isFinite(amt) && amt > 0 && amt < MIN_DEPOSIT && (
+              <span className="ml-1 text-destructive">
+                {formatMoney(amt, cur)} is below the minimum.
+              </span>
+            )}
+          </p>
           <label className="block">
             <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
               Method (optional)
