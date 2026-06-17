@@ -36,6 +36,7 @@ import { Route as AppAdminInvestmentsRouteImport } from './routes/app/admin.inve
 import { Route as AppAdminDepositsRouteImport } from './routes/app/admin.deposits'
 import { Route as AppAdminContentRouteImport } from './routes/app/admin.content'
 import { Route as AppAdminAuditRouteImport } from './routes/app/admin.audit'
+import { Route as AppAdminAffiliatePayoutsRouteImport } from './routes/app/admin.affiliate-payouts'
 import { Route as ApiPublicFxRefreshRouteImport } from './routes/api/public/fx-refresh'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -173,6 +174,12 @@ const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
   path: '/admin/audit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminAffiliatePayoutsRoute =
+  AppAdminAffiliatePayoutsRouteImport.update({
+    id: '/admin/affiliate-payouts',
+    path: '/admin/affiliate-payouts',
+    getParentRoute: () => AppRoute,
+  } as any)
 const ApiPublicFxRefreshRoute = ApiPublicFxRefreshRouteImport.update({
   id: '/api/public/fx-refresh',
   path: '/api/public/fx-refresh',
@@ -195,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/affiliate-payouts': typeof AppAdminAffiliatePayoutsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
@@ -224,6 +232,7 @@ export interface FileRoutesByTo {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/affiliate-payouts': typeof AppAdminAffiliatePayoutsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
@@ -255,6 +264,7 @@ export interface FileRoutesById {
   '/app/withdrawals': typeof AppWithdrawalsRoute
   '/app/': typeof AppIndexRoute
   '/api/public/fx-refresh': typeof ApiPublicFxRefreshRoute
+  '/app/admin/affiliate-payouts': typeof AppAdminAffiliatePayoutsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
   '/app/admin/content': typeof AppAdminContentRoute
   '/app/admin/deposits': typeof AppAdminDepositsRoute
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/api/public/fx-refresh'
+    | '/app/admin/affiliate-payouts'
     | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
@@ -316,6 +327,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app'
     | '/api/public/fx-refresh'
+    | '/app/admin/affiliate-payouts'
     | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
@@ -346,6 +358,7 @@ export interface FileRouteTypes {
     | '/app/withdrawals'
     | '/app/'
     | '/api/public/fx-refresh'
+    | '/app/admin/affiliate-payouts'
     | '/app/admin/audit'
     | '/app/admin/content'
     | '/app/admin/deposits'
@@ -560,6 +573,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAuditRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/affiliate-payouts': {
+      id: '/app/admin/affiliate-payouts'
+      path: '/admin/affiliate-payouts'
+      fullPath: '/app/admin/affiliate-payouts'
+      preLoaderRoute: typeof AppAdminAffiliatePayoutsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/public/fx-refresh': {
       id: '/api/public/fx-refresh'
       path: '/api/public/fx-refresh'
@@ -593,6 +613,7 @@ interface AppRouteChildren {
   AppTransactionsRoute: typeof AppTransactionsRouteWithChildren
   AppWithdrawalsRoute: typeof AppWithdrawalsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminAffiliatePayoutsRoute: typeof AppAdminAffiliatePayoutsRoute
   AppAdminAuditRoute: typeof AppAdminAuditRoute
   AppAdminContentRoute: typeof AppAdminContentRoute
   AppAdminDepositsRoute: typeof AppAdminDepositsRoute
@@ -618,6 +639,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTransactionsRoute: AppTransactionsRouteWithChildren,
   AppWithdrawalsRoute: AppWithdrawalsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminAffiliatePayoutsRoute: AppAdminAffiliatePayoutsRoute,
   AppAdminAuditRoute: AppAdminAuditRoute,
   AppAdminContentRoute: AppAdminContentRoute,
   AppAdminDepositsRoute: AppAdminDepositsRoute,

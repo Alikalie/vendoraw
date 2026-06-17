@@ -206,6 +206,12 @@ function AdminHome() {
       icon: Landmark,
     },
     {
+      to: "/app/admin/affiliate-payouts",
+      title: "Affiliate payouts",
+      desc: "Approve Monday payouts ($25+ min)",
+      icon: Wallet,
+    },
+    {
       to: "/app/admin/settings",
       title: "Settings",
       desc: "Bonuses, commissions, FX, fees",
