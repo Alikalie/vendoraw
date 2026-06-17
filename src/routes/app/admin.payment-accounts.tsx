@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScreenHeader } from "@/components/app/ScreenHeader";
-import { Plus, Pencil, Trash2, Power, X, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Power, X, Loader2, Eye, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/payment-accounts")({
@@ -299,6 +299,21 @@ function AdminPaymentAccounts() {
                 </Field>
               </div>
             </div>
+
+            {/* Live preview — mirrors the user Deposit screen */}
+            <div className="mt-5">
+              <div className="mb-2 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                <Eye className="h-3 w-3" /> Live preview — Deposit screen
+              </div>
+              <AccountPreview
+                name={form.name || "Account name"}
+                kind={form.kind}
+                currency={(form.currency || "USD").toUpperCase()}
+                instructions={form.instructions}
+                active={form.active}
+              />
+            </div>
+
             <div className="mt-5 grid grid-cols-2 gap-2">
               <button
                 onClick={() => setOpen(false)}
