@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const requestSchema = z.object({
-  amount: z.number().positive().max(1_000_000),
+  amount: z.number().min(10, "Minimum deposit is $10").max(1_000_000),
   methodId: z.string().uuid().optional(),
   proofPath: z.string().min(1).max(500),
   note: z.string().max(500).optional(),
