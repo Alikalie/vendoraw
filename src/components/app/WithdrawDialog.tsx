@@ -92,6 +92,10 @@ export function WithdrawDialog({
           </div>
         ) : (
           <div className="mt-4 space-y-3">
+            <div className="rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-[11px] text-warning">
+              Withdrawals unlock after a product completes its 4-day earning cycle. Limited to one
+              request per 24 hours.
+            </div>
             <label className="block">
               <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
                 Method
