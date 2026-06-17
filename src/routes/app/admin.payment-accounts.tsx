@@ -347,3 +347,71 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
+function AccountPreview({
+  name,
+  kind,
+  currency,
+  instructions,
+  active,
+}: {
+  name: string;
+  kind: string;
+  currency: string;
+  instructions: string;
+  active: boolean;
+}) {
+  const accountFields = (instructions || "")
+    .split("\n")
+    .map((l) => l.match(/^([^:]+):\s*(.+)$/))
+    .filter((m): m is RegExpMatchArray => !!m)
+    .map((m) => ({ label: m[1].trim(), value: m[2].trim() }));
+
+  return (
+    <div className="rounded-2xl border border-dashed border-primary/40 bg-background/40 p-3">
+      <div className="mb-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+        How users will see it
+      </div>
+      <div className="rounded-2xl border border-border bg-card p-4">
+        <label className="block">
+          <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            Choose payment account
+          </span>
+          <div className="mt-1 w-full rounded-xl border border-border bg-background/30 px-3 py-2.5 text-sm">
+            {name || "Account name"} — {currency} ({kind})
+            {!active && (
+              <span className="ml-2 rounded-full border border-border bg-muted px-1.5 py-0.5 text-[9px] uppercase text-muted-foreground">
+                Inactive
+              </span>
+            )}
+          </div>
+        </label>
+        {instructions ? (
+          <pre className="mt-3 whitespace-pre-wrap text-xs text-muted-foreground font-sans">
+            {instructions}
+          </pre>
+        ) : (
+          <p className="mt-3 text-xs italic text-muted-foreground">No instructions yet.</p>
+        )}
+        {accountFields.length > 0 && (
+          <div className="mt-3 space-y-1.5">
+            {accountFields.map((f) => (
+              <div
+                key={f.label}
+                className="flex items-center justify-between rounded-lg bg-background/40 px-3 py-2"
+              >
+                <div className="min-w-0">
+                  <div className="text-[10px] uppercase text-muted-foreground">{f.label}</div>
+                  <div className="text-xs font-semibold truncate">{f.value}</div>
+                </div>
+                <div className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-[10px] text-muted-foreground">
+                  <Copy className="h-3 w-3" /> Copy
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
